@@ -2,14 +2,21 @@
 import struct
 import socket
 
+from language import Message, Token
+from tokens import *
+
 class BaseClient():
     def __init__(self, host='127.0.0.1', port=16713):
         self.host = host
         self.port = port
         self.sock = None
         self.connected = False
+        self.version = 1
 
     def connect(self):
+        '''
+        Opens a socket connection to the DAIDE server
+        '''
         server_address = (self.host, self.port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
@@ -19,6 +26,9 @@ class BaseClient():
             print("Unable to connect.\n")
 
     def close(self):
+        '''
+        Closes socket connection to the DAIDE server
+        '''
         self.sock.close()
         self.connected = False
 
@@ -47,11 +57,18 @@ class BaseClient():
             return (msg_type, msg)
         except: print("Unable to get message")
 
+    def write(self, message, msg_type):
+        byte_length = max(len(message) // 2, 2)
+        header = struct.pack('!hhl', msg_type, 0, byte_length)
+        message = header + message
+        self.sock.send(message)
+
     def send_obs(self):
         pass
-
     def send_iam(self):
         pass
 
-    def send_initial_msg(self, version):
-        pass
+    def send_initial_msg(self):
+        msg = struct.pack('!ll', self.version, 0xDA10)
+        self.write(msg, 0)
+

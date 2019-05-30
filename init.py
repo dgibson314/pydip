@@ -26,3 +26,5 @@ province_categories = {
     0x56 : 'Bicoastal non-SC',
     0x57 : 'Bicoastal SC',
 }
+
+

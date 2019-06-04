@@ -62,7 +62,8 @@ class Message(list):
                 self.append(result)
 
     def raw_print(self):
-        for token in self:
+        flattened = self.flatten()
+        for token in flattened:
             token.raw_print()
 
     def flatten(self):
@@ -76,7 +77,7 @@ class Message(list):
 
     def pack(self):
         flattened = self.flatten()
-        return struct.pack('!' + 'h'*len(flattened), *map(int, flattened))
+        return struct.pack('!' + 'H'*len(flattened), *map(int, flattened))
 
     def pretty_print(self):
         msg = ''

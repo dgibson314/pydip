@@ -34,39 +34,46 @@ class BaseClient():
         self.connected = False
 
     def get_header(self):
+        '''
+        Attempts to receive the header of a Diplomacy message
+        from the server. Returns a tuple of the message type and
+        message length.
+        '''
         if (self.connected):
             header = self.sock.recv(4)
-            (msg_type, pad, msg_len) = struct.unpack('!hhl', header)
+            (msg_type, msg_len) = struct.unpack('!bxh', header)
             return (msg_type, msg_len)
         else:
             raise Exception("Not connected to server.")
 
     def recv_msg(self):
+        '''
+        Attempts to receive a Diplomacy message from the server.
+        Returns a tuple of the message type and message.
+        '''
         try:
             (msg_type, msg_len) = self.get_header()
-
             bufsize = 1024
             bytes_recvd = 0
             msg = []
+
             while (bytes_recvd < msg_len):
                 chunk = self.sock.recv(min(msg_len - bytes_recvd, bufsize))
                 if chunk == b'':
                     raise RuntimeError("socket connection broken")
                 msg.append(chunk)
                 bytes_recvd = bytes_recvd + len(chunk)
-            return b''.join(msg)
+
+            if msg:
+                return (msg_type, b''.join(msg))
+
         except Exception as e:
             print(e)
 
     def write(self, message, msg_type):
         byte_length = len(message)
         header = struct.pack('!bxh', msg_type, byte_length)
-
-        print("HEADER: \t", header)
-        print("MESSAGE: \t", message)
-
         message = header + message
-        print(len(message))
         self.sock.send(message)
 
     def send_obs(self):
@@ -83,9 +90,14 @@ class BaseClient():
         msg = struct.pack('!HH', self.version, 0xDA10)
         self.write(msg, 0)
 
+    def process_incoming_message(self, msg):
+        msg_length, message = msg[0], msg[1]
+
 b = BaseClient()
 b.connect()
 b.send_initial_msg()
 b.send_obs()
 while True:
-    b.sock.recv(1024)
+    msg = b.recv_msg()
+    if msg:
+        b.process_incoming_message(msg)

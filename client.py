@@ -2,6 +2,7 @@
 import struct
 import socket
 
+import init
 from language import Message, Token
 from tokens import *
 
@@ -49,7 +50,8 @@ class BaseClient():
     def recv_msg(self):
         '''
         Attempts to receive a Diplomacy message from the server.
-        Returns a tuple of the message type and message.
+        Returns a tuple of the message type, message length,
+        and actual message.
         '''
         try:
             (msg_type, msg_len) = self.get_header()
@@ -65,7 +67,7 @@ class BaseClient():
                 bytes_recvd = bytes_recvd + len(chunk)
 
             if msg:
-                return (msg_type, b''.join(msg))
+                return (msg_type, msg_len,  b''.join(msg))
 
         except Exception as e:
             print(e)
@@ -91,7 +93,22 @@ class BaseClient():
         self.write(msg, 0)
 
     def process_incoming_message(self, msg):
-        msg_length, message = msg[0], msg[1]
+        #TODO: use list slicing, i.e. [0:2], [2:4]
+        msg_type, msg_len, message = msg
+        print("TYPE: ", msg_type)
+        print("LENGTH: ", msg_len)
+        print("DATA: ", message)
+        '''
+        if (msg_type == init.RM):
+            self.process_representation_message(message)
+        elif (msg_type == init.DM):
+            self.process_diplomacy_message(message)
+        elif (msg_type == init.EM):
+            self.process_error_message(message)
+        '''
+
+    def process_diplomacy_message(self, msg):
+        print(msg)
 
 b = BaseClient()
 b.connect()

@@ -1,6 +1,7 @@
 import struct
 
 import init
+import util
 
 class Token():
     def __init__(self, _hex, tla):
@@ -14,6 +15,10 @@ class Token():
     @classmethod
     def ascii(cls, _char):
         return cls(0x4B00 + ord(_char), _char)
+
+    @classmethod
+    def byte(cls, _byte):
+        pass
 
     def __int__(self):
         return self._hex
@@ -40,6 +45,7 @@ class Token():
         else:
             print(self.tla)
 
+
 class Message(list):
     def __init__(self, *argv):
         for token in argv:
@@ -61,6 +67,25 @@ class Message(list):
                         pass
                 self.append(result)
 
+    @classmethod
+    def translate_from_bytes(cls, data):
+        '''
+        Should take in a Bytes object, and instantiate
+        a Message instance of the corresponding Tokens.
+        '''
+        #TODO: handle ASCII and integers
+        byte_lst = util.split_bytes_to_tokens(data)
+        # Convert list of byte objects into list of corresponding
+        # integers.
+        byte_lst = list(map(lambda x: int(x.hex(), 16), byte_lst))
+        
+        tokens = []
+        for byte in byte_lst:
+            for token in representation:
+                if token._hex == byte:
+                    tokens.append(token)
+        return cls(*tokens)
+
     def raw_print(self):
         flattened = self.flatten()
         for token in flattened:
@@ -80,15 +105,49 @@ class Message(list):
         return struct.pack('!' + 'H'*len(flattened), *map(int, flattened))
 
     def pretty_print(self):
+        #TODO: handle strings
         msg = ''
 
         for token in self:
             if (token.tla == 'BRA'):
-                msg += ' ( '
+                msg += '( '
             elif (token.tla == 'KET'):
-                msg += ' ) '
+                msg += ') '
             else:
                 msg += token.tla + ' '
 
         print(msg)
 
+
+
+# Brackets
+BRA = Token(0x4000, 'BRA')
+KET = Token(0x4001, 'KET')
+
+# Powers
+AUS = Token(0x4100, 'AUS')
+ENG = Token(0x4101, 'ENG')
+FRA = Token(0x4102, 'FRA')
+GER = Token(0x4103, 'GER')
+ITA = Token(0x4104, 'ITA')
+RUS = Token(0x4105, 'RUS')
+TUR = Token(0x4106, 'TUR')
+
+# Commands
+HLO = Token(0x4804, 'HLO')
+IAM = Token(0x4807, 'IAM')
+MAP = Token(0x4809, 'MAP')
+OBS = Token(0x480F, 'OBS')
+NME = Token(0x480C, 'NME')
+YES = Token(0x481C, 'YES')
+
+representation = {
+    BRA,
+    KET,
+    YES,
+    OBS,
+}
+
+msg = b'H\x1c@\x00H\x0f@\x01'
+m = Message.translate_from_bytes(msg)
+m.pretty_print()

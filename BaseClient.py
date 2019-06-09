@@ -3,8 +3,7 @@ import struct
 import socket
 
 import init
-from language import Message, Token
-from tokens import *
+from language import *
 
 class BaseClient():
     def __init__(self, host='127.0.0.1', port=16713):
@@ -13,7 +12,7 @@ class BaseClient():
         self.sock = None
         self.connected = False
         self.name = 'BaseClient'
-        self.version = 1
+        self.version = '1.0'
 
     def connect(self):
         '''
@@ -93,28 +92,28 @@ class BaseClient():
         self.write(msg, 0)
 
     def process_incoming_message(self, msg):
-        #TODO: use list slicing, i.e. [0:2], [2:4]
         msg_type, msg_len, message = msg
-        print("TYPE: ", msg_type)
-        print("LENGTH: ", msg_len)
-        print("DATA: ", message)
-        '''
+        
         if (msg_type == init.RM):
             self.process_representation_message(message)
         elif (msg_type == init.DM):
             self.process_diplomacy_message(message)
         elif (msg_type == init.EM):
             self.process_error_message(message)
-        '''
+        
 
     def process_diplomacy_message(self, msg):
-        print(msg)
+        try:
+            Message.translate_from_bytes(msg).pretty_print()
+        except:
+            pass
 
-b = BaseClient()
-b.connect()
-b.send_initial_msg()
-b.send_obs()
-while True:
-    msg = b.recv_msg()
-    if msg:
-        b.process_incoming_message(msg)
+if __name__ == '__main__':
+    b = BaseClient()
+    b.connect()
+    b.send_initial_msg()
+    b.send_obs()
+    while True:
+        msg = b.recv_msg()
+        if msg:
+            b.process_incoming_message(msg)

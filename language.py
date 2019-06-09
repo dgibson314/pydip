@@ -13,8 +13,12 @@ class Token():
         return cls(0x0000 + _int, _int)
 
     @classmethod
-    def ascii(cls, _char):
-        return cls(0x4B00 + ord(_char), _char)
+    def char(cls, char):
+        return cls(0x4B00 + ord(char), char)
+
+    @classmethod
+    def ascii(cls, _ascii):
+        return cls(0x4B00 + _ascii, chr(_ascii))
 
     @classmethod
     def byte(cls, _byte):
@@ -24,7 +28,6 @@ class Token():
         return self._hex
 
     def get_category(self):
-        # Get MSB byte
         cat_byte = self._hex >> 8
         category = init.categories[cat_byte]
         return category
@@ -58,14 +61,12 @@ class Message(list):
                 except:
                     pass
             elif isinstance(token, str):
-                result = []
                 for c in token:
                     try:
-                        ctoken = Token.ascii(c)
-                        result.append(ctoken)
+                        ctoken = Token.char(c)
+                        self.append(ctoken)
                     except:
                         pass
-                self.append(result)
 
     @classmethod
     def translate_from_bytes(cls, data):
@@ -73,7 +74,6 @@ class Message(list):
         Should take in a Bytes object, and instantiate
         a Message instance of the corresponding Tokens.
         '''
-        #TODO: handle ASCII and integers
         byte_lst = util.split_bytes_to_tokens(data)
         # Convert list of byte objects into list of corresponding
         # integers.
@@ -81,41 +81,46 @@ class Message(list):
         
         tokens = []
         for byte in byte_lst:
-            for token in representation:
-                if token._hex == byte:
-                    tokens.append(token)
+            cat = init.categories[byte >> 8]
+            token = None
+            if (cat == 'INTEGER'):
+                token = (Token.integer(byte & 0x00ff))
+            elif (cat == 'TEXT'):
+                token = (Token.ascii(byte & 0x00ff))
+            else:
+                for t in representation:
+                    if t._hex == byte:
+                        token = t
+            if token is None:
+                # TODO: exception handling?
+                print("BAD")
+            else:
+                tokens.append(token)
         return cls(*tokens)
 
     def raw_print(self):
-        flattened = self.flatten()
-        for token in flattened:
-            token.raw_print()
-
-    def flatten(self):
-        flat_list = []
         for token in self:
-            if isinstance(token, list):
-                for c in token:
-                    flat_list.append(c)
-            flat_list.append(token)
-        return flat_list
-
+            token.raw_print()
+    
     def pack(self):
-        flattened = self.flatten()
-        return struct.pack('!' + 'H'*len(flattened), *map(int, flattened))
+        return struct.pack('!' + 'H'*len(self), *map(int, self))
 
     def pretty_print(self):
-        #TODO: handle strings
         msg = ''
+        string_msg = '\''
 
         for token in self:
-            if (token.tla == 'BRA'):
-                msg += '( '
-            elif (token.tla == 'KET'):
-                msg += ') '
+            if (token.get_category() == 'TEXT'):
+                string_msg += token.tla
             else:
-                msg += token.tla + ' '
-
+                if (string_msg != '\''):
+                    msg += string_msg + '\' '
+                if (token.tla == 'BRA'):
+                    msg += '( '
+                elif (token.tla == 'KET'):
+                    msg += ') '
+                else:
+                    msg += token.tla + ' '
         print(msg)
 
 
@@ -144,10 +149,8 @@ YES = Token(0x481C, 'YES')
 representation = {
     BRA,
     KET,
-    YES,
-    OBS,
-}
 
-msg = b'H\x1c@\x00H\x0f@\x01'
-m = Message.translate_from_bytes(msg)
-m.pretty_print()
+    MAP,
+    OBS,
+    YES,
+}

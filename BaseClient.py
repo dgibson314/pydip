@@ -78,17 +78,18 @@ class BaseClient():
         self.sock.send(message)
 
     def send_obs(self):
-        msg = Message(OBS).pack()
-        self.write(msg, 2)
+        msg = Message(OBS)
+        self.write(msg.pack(), 2)
 
     def send_nme(self):
-        pass
+        msg = NME(self.name)(self.version)
+        self.write(msg.pack(), 2)
 
     def send_iam(self):
         pass
 
     def send_initial_msg(self):
-        msg = struct.pack('!HH', self.version, 0xDA10)
+        msg = struct.pack('!HH', 1, 0xDA10)
         self.write(msg, 0)
 
     def process_incoming_message(self, msg):
@@ -104,15 +105,21 @@ class BaseClient():
 
     def process_diplomacy_message(self, msg):
         try:
-            Message.translate_from_bytes(msg).pretty_print()
+            msg = Message.translate_from_bytes(msg)
+            msg.pretty_print()
+            if msg[0] == MAP:
+                self.handle_MAP(msg)
         except:
             pass
+
+    def handle_MAP(self, msg):
+        map_name = msg.get_first_string()
 
 if __name__ == '__main__':
     b = BaseClient()
     b.connect()
     b.send_initial_msg()
-    b.send_obs()
+    b.send_nme()
     while True:
         msg = b.recv_msg()
         if msg:

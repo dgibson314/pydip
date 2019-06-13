@@ -8,6 +8,10 @@ class Token():
         self._hex = _hex
         self.tla = tla
 
+    def __call__(self, *args):
+        # TODO: m = NME(OBS) <-> Message(NME, BRA, OBS, KET)
+        return Message(self)(*args)
+
     @classmethod
     def integer(cls, _int):
         return cls(0x0000 + _int, _int)
@@ -29,12 +33,15 @@ class Token():
 
     def get_category(self):
         cat_byte = self._hex >> 8
-        category = init.categories[cat_byte]
+        if (0x00 <= cat_byte <= 0x3F):
+            category = 'INTEGER'
+        else:
+            category = init.categories[cat_byte]
         return category
 
     def raw_print(self):
         result = 'Token(' 
-        result += hex(self._hex) + ', ' + self.tla + ')'
+        result += hex(self._hex) + ', ' + str(self.tla) + ')'
         print(result)
 
     def pretty_print(self):
@@ -50,18 +57,20 @@ class Token():
 
 
 class Message(list):
-    def __init__(self, *argv):
-        for token in argv:
-            if isinstance(token, Token):
-                self.append(token)
-            elif isinstance(token, int):
+    def __init__(self, *args):
+        for value in args:
+            if isinstance(value, Token):
+                self.append(value)
+            elif isinstance(value, Message):
+                self + value
+            elif isinstance(value, int):
                 try:
-                    int_token = Token.integer(token)
+                    int_token = Token.integer(value)
                     self.append(int_token)
                 except:
                     pass
-            elif isinstance(token, str):
-                for c in token:
+            elif isinstance(value, str):
+                for c in value:
                     try:
                         ctoken = Token.char(c)
                         self.append(ctoken)
@@ -98,12 +107,49 @@ class Message(list):
                 tokens.append(token)
         return cls(*tokens)
 
+    @staticmethod
+    def to_tokens(*args):
+        pass
+
+    def __call__(self, *args):
+        # Message(YES)(OBS, AUS) <-> YES ( OBS AUS )
+        # Message(MAP)('standard') <-> MAP ( 'standard' )
+        return self + Message(BRA) + Message(*args) + Message(KET)
+
+    def __add__(self, *args):
+        '''
+        >>> M = Message(YES, BRA)
+        >>> N = Message(OBS, KET)
+        >>> O = M + N
+        >>> O.pretty_print()
+        YES ( OBS )
+        '''
+        self.extend(*args)
+        return self
+
     def raw_print(self):
         for token in self:
             token.raw_print()
     
     def pack(self):
         return struct.pack('!' + 'H'*len(self), *map(int, self))
+
+    def get_first_string(self):
+        '''
+        >>> msg = Message(MAP, BRA, "standard", KET)
+        >>> print(msg.get_first_string())
+        "standard"
+        '''
+        result = ''
+        in_text = False
+        for token in self:
+            if token.get_category() == 'TEXT':
+                in_text = True
+                result += token.tla
+            else:
+                if in_text == True:
+                    break
+        return result
 
     def pretty_print(self):
         msg = ''
@@ -115,12 +161,13 @@ class Message(list):
             else:
                 if (string_msg != '\''):
                     msg += string_msg + '\' '
+                    string_msg = '\''
                 if (token.tla == 'BRA'):
                     msg += '( '
                 elif (token.tla == 'KET'):
                     msg += ') '
                 else:
-                    msg += token.tla + ' '
+                    msg += str(token.tla) + ' '
         print(msg)
 
 

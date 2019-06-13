@@ -77,13 +77,14 @@ class BaseClient():
         message = header + message
         self.sock.send(message)
 
-    def send_obs(self):
-        msg = Message(OBS)
+    def send_dcsp(self, msg):
         self.write(msg.pack(), 2)
 
+    def send_obs(self):
+        self.send_dcsp(Message(OBS))
+
     def send_nme(self):
-        msg = NME(self.name)(self.version)
-        self.write(msg.pack(), 2)
+        self.send_dcsp(NME(self.name)(self.version))
 
     def send_iam(self):
         pass
@@ -91,6 +92,9 @@ class BaseClient():
     def send_initial_msg(self):
         msg = struct.pack('!HH', 1, 0xDA10)
         self.write(msg, 0)
+
+    def reply_YES(self, msg):
+        self.send_dcsp(YES(msg))
 
     def process_incoming_message(self, msg):
         msg_type, msg_len, message = msg
@@ -114,6 +118,9 @@ class BaseClient():
 
     def handle_MAP(self, msg):
         map_name = msg.get_first_string()
+        #if (map_name == 'STANDARD'):
+            
+
 
 if __name__ == '__main__':
     b = BaseClient()

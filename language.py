@@ -9,7 +9,6 @@ class Token():
         self.tla = tla
 
     def __call__(self, *args):
-        # TODO: m = NME(OBS) <-> Message(NME, BRA, OBS, KET)
         return Message(self)(*args)
 
     @classmethod
@@ -31,6 +30,11 @@ class Token():
     def __int__(self):
         return self._hex
 
+    def __repr__(self):
+        result = 'Token('
+        result += hex(self._hex) + ', ' + str(self.tla) + ')'
+        return result
+
     def get_category(self):
         cat_byte = self._hex >> 8
         if (0x00 <= cat_byte <= 0x3F):
@@ -38,11 +42,6 @@ class Token():
         else:
             category = init.categories[cat_byte]
         return category
-
-    def raw_print(self):
-        result = 'Token(' 
-        result += hex(self._hex) + ', ' + str(self.tla) + ')'
-        print(result)
 
     def pretty_print(self):
         cat = self.get_category()
@@ -107,13 +106,14 @@ class Message(list):
                 tokens.append(token)
         return cls(*tokens)
 
-    @staticmethod
-    def to_tokens(*args):
-        pass
-
     def __call__(self, *args):
-        # Message(YES)(OBS, AUS) <-> YES ( OBS AUS )
-        # Message(MAP)('standard') <-> MAP ( 'standard' )
+        '''
+        >>> msg = NME('name')('version')
+        >>> msg.pretty_print()
+        NME ( 'name' ) ( 'version' )
+        >>> OBS().pretty_print()
+        OBS ( )
+        '''
         return self + Message(BRA) + Message(*args) + Message(KET)
 
     def __add__(self, *args):
@@ -133,6 +133,18 @@ class Message(list):
     
     def pack(self):
         return struct.pack('!' + 'H'*len(self), *map(int, self))
+
+    def fold(self):
+        '''
+        >>> YES(OBS).fold()
+        [YES, [OBS]]
+        >>> Message().fold()
+        []
+        '''
+        if self.count(BRA) != self.count(KET):
+            raise ValueError('unbalanced parantheses')
+
+        pass
 
     def get_first_string(self):
         '''

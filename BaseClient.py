@@ -14,7 +14,10 @@ class BaseClient():
         self.connected = False
         self.name = 'BaseClient'
         self.version = '1.0'
+        self.power = None
+        self.passcode = None
         self.variant = None
+        self.press = 0
 
     def connect(self):
         '''
@@ -89,7 +92,8 @@ class BaseClient():
         self.send_dcsp(NME(self.name)(self.version))
 
     def send_IAM(self):
-        pass
+        # TODO: maybe should check power/passcode != None
+        self.send_dcsp(IAM(self.power)(self.passcode))
 
     def send_initial_msg(self):
         msg = struct.pack('!HH', 1, 0xDA10)
@@ -119,33 +123,34 @@ class BaseClient():
         message = Message.translate_from_bytes(message)
         message.pretty_print()
         
-
     def process_diplomacy_message(self, msg):
-        try:
-            msg = Message.translate_from_bytes(msg)
-            msg.pretty_print()
-            if msg[0] == MAP:
-                self.handle_MAP(msg)
-        except:
-            pass
+        msg = Message.translate_from_bytes(msg)
+        method_name = 'handle_' + str(msg[0])
+        if msg[0] in (YES, REJ):
+            method_name += '_' + str(msg[2])
+        method = getattr(self, method_name, None)
+        if method:
+            return method(msg)
 
     def handle_MAP(self, msg):
-        map_name = msg.get_first_string()
+        map_name = msg.fold()[1][0]
         if (map_name == 'STANDARD'):
             self.reply_YES(msg)
             self.variant = 'STANDARD'
 
     def handle_HLO(self, msg):
-        pass
-            
+        self.power = msg.fold()[1][0]
+        self.passcode = msg.fold()[1][1]
+        self.press = msg.fold()[1][2][1]
 
 
 if __name__ == '__main__':
     b = BaseClient()
     b.connect()
     b.send_initial_msg()
-    b.send_OBS()
+    b.send_NME()
     while True:
         msg = b.recv_msg()
         if msg:
             b.print_incoming_message(msg)
+            b.process_incoming_message(msg)

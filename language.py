@@ -134,17 +134,51 @@ class Message(list):
     def pack(self):
         return struct.pack('!' + 'H'*len(self), *map(int, self))
 
+
     def fold(self):
+        # TODO
         '''
         >>> YES(OBS).fold()
         [YES, [OBS]]
         >>> Message().fold()
         []
+        >>> YES(MAP('standard'))
+        [YES, [MAP, ['standard']]]
         '''
         if self.count(BRA) != self.count(KET):
             raise ValueError('unbalanced parantheses')
+        copy = list(self)
+        while BRA in copy:
+            k = copy.index(KET)
+            b = self.rindex(copy[:k], BRA)
+            copy[b:k+1] = [self.convert(copy[b+1:k])]
+        return copy
+    
+    @staticmethod 
+    def rindex(lst, value):
+        return len(lst) - list(reversed(lst)).index(value) - 1
 
-        pass
+    @staticmethod
+    def convert(lst):
+        print(lst)
+        result = []
+        text = ''
+        for token in lst:
+            if not isinstance(token, Token):
+                result.append(token)
+            elif (token.get_category() == 'TEXT'):
+                text += token.tla
+            else:
+                if (text != ''):
+                   result.append(text) 
+                   text = ''
+                if (token.get_category() == 'INTEGER'):
+                    result.append(token._hex)
+                else:
+                    result.append(token)
+        if text != '':
+            result.append(text)
+        return result
 
     def get_first_string(self):
         '''

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import struct
 import socket
+import threading
 
 import init
 from language import *
@@ -13,6 +14,7 @@ class BaseClient():
         self.connected = False
         self.name = 'BaseClient'
         self.version = '1.0'
+        self.variant = None
 
     def connect(self):
         '''
@@ -80,21 +82,27 @@ class BaseClient():
     def send_dcsp(self, msg):
         self.write(msg.pack(), 2)
 
-    def send_obs(self):
+    def send_OBS(self):
         self.send_dcsp(Message(OBS))
 
-    def send_nme(self):
+    def send_NME(self):
         self.send_dcsp(NME(self.name)(self.version))
 
-    def send_iam(self):
+    def send_IAM(self):
         pass
 
     def send_initial_msg(self):
         msg = struct.pack('!HH', 1, 0xDA10)
         self.write(msg, 0)
 
+    def request_MAP(self):
+        self.send_dcsp(Message(MAP))
+
     def reply_YES(self, msg):
         self.send_dcsp(YES(msg))
+
+    def reply_REJ(self, msg):
+        self.send_dcsp(REJ(msg))
 
     def process_incoming_message(self, msg):
         msg_type, msg_len, message = msg
@@ -105,6 +113,11 @@ class BaseClient():
             self.process_diplomacy_message(message)
         elif (msg_type == init.EM):
             self.process_error_message(message)
+
+    def print_incoming_message(self, msg):
+        msg_type, msg_len, message = msg
+        message = Message.translate_from_bytes(message)
+        message.pretty_print()
         
 
     def process_diplomacy_message(self, msg):
@@ -118,7 +131,12 @@ class BaseClient():
 
     def handle_MAP(self, msg):
         map_name = msg.get_first_string()
-        #if (map_name == 'STANDARD'):
+        if (map_name == 'STANDARD'):
+            self.reply_YES(msg)
+            self.variant = 'STANDARD'
+
+    def handle_HLO(self, msg):
+        pass
             
 
 
@@ -126,8 +144,8 @@ if __name__ == '__main__':
     b = BaseClient()
     b.connect()
     b.send_initial_msg()
-    b.send_nme()
+    b.send_OBS()
     while True:
         msg = b.recv_msg()
         if msg:
-            b.process_incoming_message(msg)
+            b.print_incoming_message(msg)

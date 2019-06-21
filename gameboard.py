@@ -16,7 +16,8 @@ class Gameboard():
     (probably) by being passed NOW and SCO messages from the DAIDE server.
     - supply_centers    Mapping from powers to a list of SCs they have 
                         after each Fall Retreat turn
-    - units             
+    - units             Mapping from powers to a list of tuples, each of
+                        the form (unit_type, province)
 
     '''
     def __init__(self, MDF_message):
@@ -34,6 +35,8 @@ class Gameboard():
         # Adding powers
         for power in folded_msg[1]:
             self.powers.append(power)
+            # Initializing self.units to power<->[]
+            self.units[power] = []
 
         # Adding supply centers
         sc_section = folded_msg[2][0]
@@ -56,9 +59,10 @@ class Gameboard():
                     self.adjacencies[province][unit_type] = adj[1:]
 
     def update_supply_centers(self, SCO_message):
-        ''' Updates the current supply center ownership by traversing
-        an SCO message from DAIDE server. Unowned centers are listed against
-        the power name UNO.
+        ''' 
+        Updates the current supply center ownership by traversing an
+        SCO message from the DAIDE server. Unowned centers are listed 
+        against the power name UNO.
         '''
         folded_SCO = SCO_message.fold()
         for position in folded_SCO[1:]:
@@ -67,3 +71,24 @@ class Gameboard():
             self.supply_centers[power] = []
             for center in centers:
                 self.supply_centers[power].append(center)
+
+    def update_turn_and_units(self, NOW_message):
+        ''' 
+        Updates current turn and unit positions by traversing a
+        NOW message from the DAIDE server.
+        '''
+        folded_NOW = NOW_message.fold()
+        self.season = folded_NOW[1][0]
+        self.year = folded_NOW[1][1]
+
+        positions = folded_NOW[2:]
+        for position in positions:
+            power = position[0]
+            # clear out old unit positions
+            self.units[power] = []
+            unit_type = position[1]
+            province = position[2]
+            # NOTE: province may be a tuple of provine and coast
+            # together if unit is in bicoastal province, e.g. (STP SCS)
+            self.units[power].append((unit_type, province))
+

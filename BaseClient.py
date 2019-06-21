@@ -35,6 +35,7 @@ class BaseClient():
         '''
         Closes socket connection to the DAIDE server
         '''
+        self.send_FM()
         self.sock.close()
         self.connected = False
 
@@ -80,7 +81,13 @@ class BaseClient():
         byte_length = len(message)
         header = struct.pack('!bxh', msg_type, byte_length)
         message = header + message
-        self.sock.send(message)
+        if self.sock:
+            self.sock.send(message)
+        else:
+            raise RuntimeError("socket connection broken")
+
+    def send_FM(self):
+        self.write(0, 3)
 
     def send_dcsp(self, msg):
         self.write(msg.pack(), 2)
@@ -92,8 +99,8 @@ class BaseClient():
         self.send_dcsp(NME(self.name)(self.version))
 
     def send_IAM(self):
-        # TODO: maybe should check power/passcode != None
-        self.send_dcsp(IAM(self.power)(self.passcode))
+        if self.power and self.passcode:
+            self.send_dcsp(IAM(self.power)(self.passcode))
 
     def send_initial_msg(self):
         msg = struct.pack('!HH', 1, 0xDA10)
@@ -137,8 +144,12 @@ class BaseClient():
         if (map_name == 'STANDARD'):
             self.reply_YES(msg)
             self.variant = 'STANDARD'
+        else:
+            self.reply_REJ(msg)
+            self.close()
 
     def handle_HLO(self, msg):
+        # TODO: right now very basic handling of variant options
         self.power = msg.fold()[1][0]
         self.passcode = msg.fold()[1][1]
         self.press = msg.fold()[1][2][1]

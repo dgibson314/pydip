@@ -35,6 +35,9 @@ class Token():
         result += hex(self._hex) + ', ' + str(self.tla) + ')'
         return result
 
+    def __str__(self):
+        return self.tla
+
     def get_category(self):
         cat_byte = self._hex >> 8
         if (0x00 <= cat_byte <= 0x3F):
@@ -129,14 +132,12 @@ class Message(list):
 
     def raw_print(self):
         for token in self:
-            token.raw_print()
+            print(token)
     
     def pack(self):
         return struct.pack('!' + 'H'*len(self), *map(int, self))
 
-
     def fold(self):
-        # TODO
         '''
         >>> YES(OBS).fold()
         [YES, [OBS]]
@@ -160,7 +161,6 @@ class Message(list):
 
     @staticmethod
     def convert(lst):
-        print(lst)
         result = []
         text = ''
         for token in lst:

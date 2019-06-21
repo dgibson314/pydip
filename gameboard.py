@@ -8,7 +8,7 @@ class Gameboard():
     def __init__(self, MDF_message):
         self.powers = []
         self.provinces = {}
-        self.adjacencies = []
+        self.adjacencies = {}
 
         folded_msg = MDF_message.fold()
 
@@ -30,3 +30,13 @@ class Gameboard():
 
         # Adding adjacencies 
         adjacencies = folded_msg[3]
+        for prov_adj in adjacencies:
+            province = prov_adj[0]
+            self.adjacencies[province] = {}
+            for adj in prov_adj:
+                unit_type = adj[0]
+                if isinstance(unit_type, list):
+                    # unit_type <-> [FLT coast]
+                    pass
+                else:
+                    self.adjacencies[province][unit_type] = adj[1:]

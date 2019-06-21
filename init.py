@@ -1,5 +1,4 @@
 categories = {
-    0x00 : 'INTEGER',
     0x40 : 'BRACKET',
     0x41 : 'POWER',
     0x42 : 'UNIT TYPE',

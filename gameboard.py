@@ -33,7 +33,8 @@ class Gameboard():
         for prov_adj in adjacencies:
             province = prov_adj[0]
             self.adjacencies[province] = {}
-            for adj in prov_adj:
+            adjs = prov_adj[1:]
+            for adj in adjs:
                 unit_type = adj[0]
                 if isinstance(unit_type, list):
                     # unit_type <-> [FLT coast]

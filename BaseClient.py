@@ -5,6 +5,7 @@ import threading
 
 import init
 from language import *
+from gameboard import Gameboard
 
 class BaseClient():
     def __init__(self, host='127.0.0.1', port=16713):
@@ -14,6 +15,7 @@ class BaseClient():
         self.connected = False
         self.name = 'BaseClient'
         self.version = '1.0'
+        self.map = None
         self.power = None
         self.passcode = None
         self.variant = None
@@ -139,13 +141,22 @@ class BaseClient():
         if method:
             return method(msg)
 
+    def handle_MDF(self, MDF_msg):
+        try:
+            self.map = Gameboard(MDF_msg)
+            self.send_dcsp(YES(MAP(self.variant)))
+        except:
+            self.send_dcsp(REJ(MAP(self.variant)))
+            self.close()
+
+
     def handle_MAP(self, msg):
         map_name = msg.fold()[1][0]
-        if (map_name == 'STANDARD'):
+        self.variant = map_name
+        if self.map is None:
+            self.send_dcsp(Message(MDF))
+        elif (map_name == 'STANDARD'):
             self.reply_YES(msg)
-            self.variant = 'STANDARD'
-        else:
-            self.reply_REJ(msg)
             self.close()
 
     def handle_HLO(self, msg):

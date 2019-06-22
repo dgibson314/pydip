@@ -108,6 +108,12 @@ class BaseClient():
         msg = struct.pack('!HH', 1, 0xDA10)
         self.write(msg, 0)
 
+    def register(self):
+        if not self.connected:
+            self.connect()
+        self.send_initial_msg()
+        self.send_NME()
+
     def request_MAP(self):
         self.send_dcsp(Message(MAP))
 
@@ -141,6 +147,12 @@ class BaseClient():
         if method:
             return method(msg)
 
+    def process_representation_message(self, msg):
+        raise NotImplementedError
+
+    def process_error_message(self, msg):
+        raise NotImplementedError
+
     def handle_MDF(self, MDF_msg):
         try:
             self.map = Gameboard(MDF_msg)
@@ -148,7 +160,6 @@ class BaseClient():
         except:
             self.send_dcsp(REJ(MAP(self.variant)))
             self.close()
-
 
     def handle_MAP(self, msg):
         map_name = msg.fold()[1][0]
@@ -161,9 +172,17 @@ class BaseClient():
 
     def handle_HLO(self, msg):
         # TODO: right now very basic handling of variant options
-        self.power = msg.fold()[1][0]
-        self.passcode = msg.fold()[1][1]
-        self.press = msg.fold()[1][2][1]
+        folded_HLO = msg.fold()
+        self.power = folded_HLO[1][0]
+        self.passcode = folded_HLO[1][1]
+        self.press = folded_HLO[1][2][1]
+
+    def handle_SCO(self, msg):
+        self.map.update_supply_centers(msg)
+        self.generate_orders()
+
+    def generate_orders(self):
+        raise NotImplementedError
 
 
 if __name__ == '__main__':

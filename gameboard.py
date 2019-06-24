@@ -4,13 +4,13 @@ class Gameboard():
 
     The following instance variables refer to the initial game state, and will
     remain unchanged throughout the game.
-    - powers        List of powers
-    - home_centers  Dictionary of powers mapped to their home SCs
-    - adjacencies   Mimics the structure of MDF adjacency list, e.g. [[prov_adj][prov_adj]...],
-                    where [prov_adj] is of the form 
-                    [province [unit_type adj_prov adj_prov...]...]...].
-                    See the DAIDE Message Syntax section on the MDF message
-                    for more details.
+    - powers            List of powers
+    - home_centers      Dictionary of powers mapped to their home SCs
+    - adjacencies       Mimics the structure of MDF adjacency list, e.g. 
+                        [[prov_adj][prov_adj]...], where [prov_adj] is of the form 
+                        [province [unit_type adj_prov adj_prov...]...]...].
+                        See the DAIDE Message Syntax section on the MDF message
+                        for more details.
 
     The following instance variables are updated as the game progresses, 
     (probably) by being passed NOW and SCO messages from the DAIDE server.
@@ -18,6 +18,19 @@ class Gameboard():
                         after each Fall Retreat turn
     - units             Mapping from powers to a list of tuples, each of
                         the form (unit_type, province)
+    - year              Current year, e.g. 1901, 1902, etc.
+    - season            One of:
+                            SPR: Spring moves
+                            SUM: Spring retreats
+                            FAL: Fall moves
+                            AUT: Fall retreats
+                            WIN: Adjustments
+
+    The Gameboard also stores the orders, and they can be retrieved in a
+    Message format which can then be sent to the DAIDE server. Once the
+    server has adjudicated, the results should be passed back to this
+    class, which then updates the current positions.
+    - orders            Mapping from units to orders
 
     '''
     def __init__(self, MDF_message):
@@ -30,8 +43,9 @@ class Gameboard():
         self.year = None
         self.season = None
 
-        folded_msg = MDF_message.fold()
+        self.orders = {}
 
+        folded_msg = MDF_message.fold()
         # Adding powers
         for power in folded_msg[1]:
             self.powers.append(power)
@@ -92,3 +106,11 @@ class Gameboard():
             # together if unit is in bicoastal province, e.g. (STP SCS)
             self.units[power].append((unit_type, province))
 
+        # Clear out orders
+
+
+    def get_units(self, power):
+        return self.units[power]
+
+    def get_supply_centers(self, power):
+        return self.supply_centers[power]

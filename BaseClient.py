@@ -123,22 +123,22 @@ class BaseClient():
     def reply_REJ(self, msg):
         self.send_dcsp(REJ(msg))
 
-    def process_incoming_message(self, msg):
+    def handle_incoming_message(self, msg):
         msg_type, msg_len, message = msg
         
         if (msg_type == init.RM):
-            self.process_representation_message(message)
+            self.handle_representation_message(message)
         elif (msg_type == init.DM):
-            self.process_diplomacy_message(message)
+            self.handle_diplomacy_message(message)
         elif (msg_type == init.EM):
-            self.process_error_message(message)
+            self.handle_error_message(message)
 
     def print_incoming_message(self, msg):
         msg_type, msg_len, message = msg
         message = Message.translate_from_bytes(message)
         message.pretty_print()
         
-    def process_diplomacy_message(self, msg):
+    def handle_diplomacy_message(self, msg):
         msg = Message.translate_from_bytes(msg)
         method_name = 'handle_' + str(msg[0])
         if msg[0] in (YES, REJ):
@@ -147,10 +147,10 @@ class BaseClient():
         if method:
             return method(msg)
 
-    def process_representation_message(self, msg):
+    def handle_representation_message(self, msg):
         raise NotImplementedError
 
-    def process_error_message(self, msg):
+    def handle_error_message(self, msg):
         raise NotImplementedError
 
     def handle_MDF(self, MDF_msg):
@@ -194,4 +194,4 @@ if __name__ == '__main__':
         msg = b.recv_msg()
         if msg:
             b.print_incoming_message(msg)
-            b.process_incoming_message(msg)
+            b.handle_incoming_message(msg)

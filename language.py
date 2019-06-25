@@ -42,6 +42,8 @@ class Token():
         cat_byte = self._hex >> 8
         if (0x00 <= cat_byte <= 0x3F):
             category = 'INTEGER'
+        elif (0x50 <= cat_byte <= 0x57):
+            category = 'PROVINCE'
         else:
             category = init.categories[cat_byte]
         return category
@@ -86,13 +88,18 @@ class Message(list):
         a Message instance of the corresponding Tokens.
         '''
         byte_lst = util.split_bytes_to_tokens(data)
-        # Convert list of byte objects into list of corresponding
-        # integers.
+        # Convert list of byte objects into list of corresponding integers.
         byte_lst = list(map(lambda x: int(x.hex(), 16), byte_lst))
         
         tokens = []
         for byte in byte_lst:
-            cat = init.categories[byte >> 8]
+            cat_byte = byte >> 8
+            if 0x00 <= cat_byte <= 0x3F:
+                cat = 'INTEGER'
+            elif 0x50 <= cat_byte <= 0x57:
+                cat = 'PROVINCE'
+            else:
+                cat = init.categories[byte >> 8]
             token = None
             if (cat == 'INTEGER'):
                 token = (Token.integer(byte & 0x00ff))
@@ -129,6 +136,9 @@ class Message(list):
         '''
         self.extend(*args)
         return self
+
+    def wrap(self):
+        return Message(BRA) + self + Message(KET)
 
     def raw_print(self):
         for token in self:

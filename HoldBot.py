@@ -8,9 +8,9 @@ class HoldBot(BaseClient):
         self.name = 'HoldBot'
         self.version = '1.0'
 
-    def handle_SCO(self, msg):
-        pass
-        
+    def generate_orders(self):
+        raise NotImplementedError
+
 
 if __name__ == '__main__':
     bot = HoldBot()

@@ -3,6 +3,7 @@ import struct
 import init
 import util
 
+
 class Token():
     def __init__(self, _hex, tla):
         self._hex = _hex
@@ -10,6 +11,13 @@ class Token():
 
     def __call__(self, *args):
         return Message(self)(*args)
+
+    def __pos__(self):
+        '''
+        >>> +ENG
+        [Token(0x4101, ENG)]
+        '''
+        return Message(self)
 
     @classmethod
     def integer(cls, _int):
@@ -50,7 +58,7 @@ class Token():
 
     def pretty_print(self):
         cat = self.get_category()
-        
+
         if (cat == 'BRACKET'):
             if (self.tla == 'BRA'):
                 print('(')
@@ -71,14 +79,14 @@ class Message(list):
                 try:
                     int_token = Token.integer(value)
                     self.append(int_token)
-                except:
+                except Exception:
                     pass
             elif isinstance(value, str):
                 for c in value:
                     try:
                         ctoken = Token.char(c)
                         self.append(ctoken)
-                    except:
+                    except Exception:
                         pass
 
     @classmethod
@@ -90,7 +98,7 @@ class Message(list):
         byte_lst = util.split_bytes_to_tokens(data)
         # Convert list of byte objects into list of corresponding integers.
         byte_lst = list(map(lambda x: int(x.hex(), 16), byte_lst))
-        
+
         tokens = []
         for byte in byte_lst:
             cat_byte = byte >> 8
@@ -143,7 +151,7 @@ class Message(list):
     def raw_print(self):
         for token in self:
             print(token)
-    
+
     def pack(self):
         return struct.pack('!' + 'H'*len(self), *map(int, self))
 
@@ -164,8 +172,8 @@ class Message(list):
             b = self.rindex(copy[:k], BRA)
             copy[b:k+1] = [self.convert(copy[b+1:k])]
         return copy
-    
-    @staticmethod 
+
+    @staticmethod
     def rindex(lst, value):
         return len(lst) - list(reversed(lst)).index(value) - 1
 
@@ -180,8 +188,8 @@ class Message(list):
                 text += token.tla
             else:
                 if (text != ''):
-                   result.append(text) 
-                   text = ''
+                    result.append(text)
+                    text = ''
                 if (token.get_category() == 'INTEGER'):
                     result.append(token._hex)
                 else:
@@ -203,11 +211,11 @@ class Message(list):
                 in_text = True
                 result += token.tla
             else:
-                if in_text == True:
+                if in_text:
                     break
         return result
 
-    def pretty_print(self):
+    def __repr__(self):
         msg = ''
         string_msg = '\''
 
@@ -224,8 +232,7 @@ class Message(list):
                     msg += ') '
                 else:
                     msg += str(token.tla) + ' '
-        print(msg)
-
+        return msg
 
 
 # Brackets

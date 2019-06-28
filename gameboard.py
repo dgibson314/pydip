@@ -1,3 +1,6 @@
+from language import *
+
+
 class Gameboard():
     '''
     Stores info about current turn and current unit positions.
@@ -6,15 +9,15 @@ class Gameboard():
     remain unchanged throughout the game.
     - powers            List of powers
     - home_centers      Dictionary of powers mapped to their home SCs
-    - adjacencies       Mimics the structure of MDF adjacency list, e.g. 
-                        [[prov_adj][prov_adj]...], where [prov_adj] is of the form 
+    - adjacencies       Mimics the structure of MDF adjacency list, e.g.
+                        [[prov_adj][prov_adj]...], where [prov_adj] is of the form
                         [province [unit_type adj_prov adj_prov...]...]...].
                         See the DAIDE Message Syntax section on the MDF message
                         for more details.
 
-    The following instance variables are updated as the game progresses, 
+    The following instance variables are updated as the game progresses,
     (probably) by being passed NOW and SCO messages from the DAIDE server.
-    - supply_centers    Mapping from powers to a list of SCs they have 
+    - supply_centers    Mapping from powers to a list of SCs they have
                         after each Fall Retreat turn
     - units             Mapping from powers to a list of tuples, each of
                         the form (unit_type, province)
@@ -31,9 +34,14 @@ class Gameboard():
     server has adjudicated, the results should be passed back to this
     class, which then updates the current positions.
     - orders            Mapping from units to orders
+    - retreat_opts      Mapping from units that must retreat to a list
+                        of provinces they're able to retreat to. An
+                        empty list signals the unit has no possible
+                        retreats.
 
     '''
-    def __init__(self, MDF_message):
+    def __init__(self, power, MDF_message):
+        self.power_played = power
         self.powers = []
         self.home_centers = {}
         self.adjacencies = {}
@@ -44,6 +52,7 @@ class Gameboard():
         self.season = None
 
         self.orders = {}
+        self.retreat_opts = {}
 
         folded_msg = MDF_message.fold()
         # Adding powers
@@ -58,7 +67,7 @@ class Gameboard():
             power = sc_lst[0]
             self.home_centers[power] = sc_lst[1:]
 
-        # Adding adjacencies 
+        # Adding adjacencies
         adjacencies = folded_msg[3]
         for prov_adj in adjacencies:
             province = prov_adj[0]
@@ -73,9 +82,9 @@ class Gameboard():
                     self.adjacencies[province][unit_type] = adj[1:]
 
     def update_supply_centers(self, SCO_message):
-        ''' 
+        '''
         Updates the current supply center ownership by traversing an
-        SCO message from the DAIDE server. Unowned centers are listed 
+        SCO message from the DAIDE server. Unowned centers are listed
         against the power name UNO.
         '''
         folded_SCO = SCO_message.fold()
@@ -101,16 +110,65 @@ class Gameboard():
             # clear out old unit positions
             self.units[power] = []
             unit_type = position[1]
+            # NOTE: province may be a tuple of province and coast
             province = position[2]
-            # NOTE: province may be a tuple of provine and coast
-            # together if unit is in bicoastal province, e.g. (STP SCS)
-            self.units[power].append((unit_type, province))
+            unit = (unit_type, province)
+            self.units[power].append(unit)
+
+            # Update MRT retreat options, if necessary
+            if MRT in position:
+                m_index = postion.index(MRT)
+                self.retreat_opts[unit] = position[m_index+1:]
 
         # Clear out orders
-
+        # TODO: perhaps unneccessary/harmful? Maybe should just
+        # have a method 'clear_orders' ?
+        self.orders = {}
+        owned_units = self.get_units()
+        for unit in owned_units:
+            self.orders[unit] = []
 
     def get_units(self, power):
         return self.units[power]
 
     def get_supply_centers(self, power):
         return self.supply_centers[power]
+
+    def retrieve_orders(self):
+        units = self.get_units(self.power_played)
+        pass
+
+
+class BaseOrder():
+    def __init__(self, unit):
+        self.unit = unit
+        self.note = None
+
+
+class HoldOrder():
+    def __init__(self, unit):
+        self.unit = unit
+
+    def __repr__(self):
+        return "Hold(%s %s)" % (self.unit[0], self.unit[1])
+
+
+class MoveOrder():
+    def __init__(self, unit, destination):
+        self.unit = unit
+        self.dest = destination
+
+    def __repr__(self):
+        return "Move(%s %s > %s)" % (self.unit[0], self.unit[1], self.dest)
+
+class SupportHoldOrder():
+    def __init__(self, unit, sup_unit):
+        self.unit = unit
+        self.supported = sup_unit
+
+
+if __name__ == '__main__':
+    unit = Message(FLT, LON)
+    print(unit)
+    h = HoldOrder(unit)
+    m = MoveOrder(unit, LVP)

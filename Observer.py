@@ -19,5 +19,5 @@ if __name__ == '__main__':
     while True:
         msg = obs.recv_msg()
         if msg:
-            obs.handle_incoming_message(msg)
+            #obs.handle_incoming_message(msg)
             obs.print_incoming_message(msg)

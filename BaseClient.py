@@ -95,7 +95,7 @@ class BaseClient():
         self.write(msg.pack(), 2)
 
     def send_OBS(self):
-        self.send_dcsp(Message(OBS))
+        self.send_dcsp(+OBS)
 
     def send_NME(self):
         self.send_dcsp(NME(self.name)(self.version))
@@ -115,7 +115,7 @@ class BaseClient():
         self.send_NME()
 
     def request_MAP(self):
-        self.send_dcsp(Message(MAP))
+        self.send_dcsp(+MAP)
 
     def reply_YES(self, msg):
         self.send_dcsp(YES(msg))
@@ -165,7 +165,7 @@ class BaseClient():
         map_name = msg.fold()[1][0]
         self.variant = map_name
         if self.map is None:
-            self.send_dcsp(Message(MDF))
+            self.send_dcsp(+MDF)
         elif (map_name == 'STANDARD'):
             self.reply_YES(msg)
             self.close()
@@ -174,8 +174,8 @@ class BaseClient():
         # TODO: right now very basic handling of variant options
         folded_HLO = msg.fold()
         self.power = folded_HLO[1][0]
-        self.passcode = folded_HLO[1][1]
-        self.press = folded_HLO[1][2][1]
+        self.passcode = folded_HLO[2][0]
+        self.press = folded_HLO[3][0][1]
 
     def handle_SCO(self, msg):
         self.map.update_supply_centers(msg)
@@ -187,9 +187,7 @@ class BaseClient():
 
 if __name__ == '__main__':
     b = BaseClient()
-    b.connect()
-    b.send_initial_msg()
-    b.send_NME()
+    b.register()
     while True:
         msg = b.recv_msg()
         if msg:

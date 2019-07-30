@@ -20,7 +20,7 @@ class Gameboard():
     - supply_centers    Mapping from powers to a list of SCs they have
                         after each Fall Retreat turn
     - units             Mapping from powers to a list of tuples, each of
-                        the form (unit_type, province)
+                        the form (power, unit_type, province)
     - year              Current year, e.g. 1901, 1902, etc.
     - season            One of:
                             SPR: Spring moves
@@ -33,7 +33,8 @@ class Gameboard():
     Message format which can then be sent to the DAIDE server. Once the
     server has adjudicated, the results should be passed back to this
     class, which then updates the current positions.
-    - orders            Mapping from units to orders
+    - orders            Mapping from units to orders, units consisting of
+                        the form (power, unit_type, province)
     - retreat_opts      Mapping from units that must retreat to a list
                         of provinces they're able to retreat to. An
                         empty list signals the unit has no possible
@@ -112,7 +113,7 @@ class Gameboard():
             unit_type = position[1]
             # NOTE: province may be a tuple of province and coast
             province = position[2]
-            unit = (unit_type, province)
+            unit = (power, unit_type, province)
             self.units[power].append(unit)
 
             # Update MRT retreat options, if necessary
@@ -138,6 +139,17 @@ class Gameboard():
         units = self.get_units(self.power_played)
         pass
 
+    def add(self, order):
+        ''' 
+        Adds Order to the self.orders mapping, removing
+        any prior orders that belong to the same unit.
+        '''
+
+
+class Unit():
+    def __init__(self):
+        pass
+
 
 class BaseOrder():
     def __init__(self, unit):
@@ -150,7 +162,10 @@ class HoldOrder():
         self.unit = unit
 
     def __repr__(self):
-        return "Hold(%s %s)" % (self.unit[0], self.unit[1])
+        return "HoldOrder(%s)" % (self.unit)
+
+    def __str__(self):
+        return "Hold(%s)" % (self.unit)
 
 
 class MoveOrder():
@@ -159,16 +174,59 @@ class MoveOrder():
         self.dest = destination
 
     def __repr__(self):
-        return "Move(%s %s > %s)" % (self.unit[0], self.unit[1], self.dest)
+        return "MoveOrder(%s, %s)" % (self.unit, self.dest)
+
+    def __str__(self):
+        return "Move(%s -> %s)" % (self.unit, self.dest)
+
 
 class SupportHoldOrder():
     def __init__(self, unit, sup_unit):
         self.unit = unit
         self.supported = sup_unit
 
+    def __repr__(self):
+        return "SupportHoldOrder(%s, %s)" % (self.unit, self.supported)
+
+    def __str__(self):
+        return "SupportHold(%s | %s)" % (self.unit, self.supported)
+
+
+class SupportMoveOrder():
+    def __init__(self, unit, sup_unit, destination):
+        self.unit = unit
+        self.supported = sup_unit
+        self.dest = destination
+
+    def __repr__(self):
+        return "SupportMoveOrder(%s, %s, %s)" % (self.unit, self.supported, self.dest)
+
+    def __str__(self):
+        return "SupportMove(%s | %s -> %s)" % (self.unit, self.supported, self.dest)
+
+
+class ConvoyOrder():
+    def __init__(self, unit, cvy_unit, destination):
+        self.unit = unit
+        self.cvy_unit = cvy_unit
+        self.dest = destination
+
+    def __repr__(self):
+        return "ConvoyOrder(%s, %s)" % (self.unit, self.cvy_unit, self.dest)
+
+    def __str__(self):
+        return "Convoy(%s ^ %s -> %s)" % (self.unit, self.cvy_unit, self.dest)
+
+
+class MoveByConvoyOrder():
+    def __init__(self, unit, path):
+        self.unit = unit
+        self.path = path
+
+    def __repr__(self):
+        pass
+
 
 if __name__ == '__main__':
-    unit = Message(FLT, LON)
-    print(unit)
-    h = HoldOrder(unit)
-    m = MoveOrder(unit, LVP)
+    c = ConvoyOrder((ENG, FLT, LON), (ENG, AMY, LVP), BRE)
+    print(c)

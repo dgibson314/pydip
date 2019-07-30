@@ -39,12 +39,29 @@ class Token():
         return self._hex
 
     def __repr__(self):
-        result = 'Token('
-        result += hex(self._hex) + ', ' + str(self.tla) + ')'
+        return 'Token(%s, %s)' % (self._hex, self.tla)
+
+    '''
+    def __repr__(self):
+        result = ''
+        cat = self.get_category()
+        if (cat == 'BRACKET'):
+            if (self.tla == 'BRA'):
+                result += '('
+            else:
+                result += ')'
+        else:
+            result += self.tla
         return result
+        '''
 
     def __str__(self):
-        return self.tla
+        if self.tla == 'BRA':
+            return '('
+        elif self.tla == 'KET':
+            return ')'
+        else:
+            return str(self.tla)
 
     def get_category(self):
         cat_byte = self._hex >> 8
@@ -66,6 +83,11 @@ class Token():
                 print(')')
         else:
             print(self.tla)
+
+    def raw_print(self):
+        result = 'Token('
+        result += hex(self._hex) + ', ' + str(self.tla) + ')'
+        return result
 
 
 class Message(list):

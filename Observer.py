@@ -1,5 +1,6 @@
 from BaseClient import BaseClient
 
+
 class Observer(BaseClient):
     def __init__(self, host='127.0.0.1', port=16713):
         BaseClient.__init__(self, host, port)

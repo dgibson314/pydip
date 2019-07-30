@@ -7,6 +7,7 @@ import init
 from language import *
 from gameboard import Gameboard
 
+
 class BaseClient():
     def __init__(self, host='127.0.0.1', port=16713):
         self.host = host
@@ -30,7 +31,7 @@ class BaseClient():
         try:
             self.sock.connect(server_address)
             self.connected = True
-        except:
+        except Exception:
             print("Unable to connect.\n")
 
     def close(self):
@@ -125,7 +126,7 @@ class BaseClient():
 
     def handle_incoming_message(self, msg):
         msg_type, msg_len, message = msg
-        
+
         if (msg_type == init.RM):
             self.handle_representation_message(message)
         elif (msg_type == init.DM):
@@ -136,8 +137,8 @@ class BaseClient():
     def print_incoming_message(self, msg):
         msg_type, msg_len, message = msg
         message = Message.translate_from_bytes(message)
-        message.pretty_print()
-        
+        print(message)
+
     def handle_diplomacy_message(self, msg):
         msg = Message.translate_from_bytes(msg)
         method_name = 'handle_' + str(msg[0])
@@ -154,12 +155,14 @@ class BaseClient():
         raise NotImplementedError
 
     def handle_MDF(self, MDF_msg):
-        try:
-            self.map = Gameboard(MDF_msg)
-            self.send_dcsp(YES(MAP(self.variant)))
-        except:
-            self.send_dcsp(REJ(MAP(self.variant)))
-            self.close()
+        if self.power:
+            try:
+                self.map = Gameboard(self.power, MDF_msg)
+                self.send_dcsp(YES(MAP(self.variant)))
+            except Exception as e:
+                self.send_dcsp(REJ(MAP(self.variant)))
+                self.close()
+                print(e)
 
     def handle_MAP(self, msg):
         map_name = msg.fold()[1][0]

@@ -56,6 +56,7 @@ class Gameboard():
         self.retreat_opts = {}
 
         folded_msg = MDF_message.fold()
+
         # Adding powers
         for power in folded_msg[1]:
             self.powers.append(power)
@@ -108,10 +109,12 @@ class Gameboard():
         positions = folded_NOW[2:]
         for position in positions:
             power = position[0]
+
             # clear out old unit positions
             self.units[power] = []
+
+            # add updated unit
             unit_type = position[1]
-            # NOTE: province may be a tuple of province and coast
             province = position[2]
             unit = (power, unit_type, province)
             self.units[power].append(unit)
@@ -122,21 +125,26 @@ class Gameboard():
                 self.retreat_opts[unit] = position[m_index+1:]
 
         # Clear out orders
-        # TODO: perhaps unneccessary/harmful? Maybe should just
-        # have a method 'clear_orders' ?
+        # TODO: perhaps unneccessary/harmful?
+        self.clear_orders()
+
+    def clear_orders(self):
         self.orders = {}
-        owned_units = self.get_units()
+        owned_units = self.get_own_units()
         for unit in owned_units:
             self.orders[unit] = []
 
     def get_units(self, power):
         return self.units[power]
 
+    def get_own_units(self, power):
+        return self.get_units(self.power_played)
+
     def get_supply_centers(self, power):
         return self.supply_centers[power]
 
-    def retrieve_orders(self):
-        units = self.get_units(self.power_played)
+    def get_orders(self):
+        units = self.get_own_units()
         pass
 
     def add(self, order):

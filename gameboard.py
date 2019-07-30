@@ -147,14 +147,20 @@ class Gameboard():
 
 
 class Unit():
-    def __init__(self):
-        pass
+    def __init__(self, power, unit_type, province):
+        self.power = power
+        self.unit_type = unit_type
+        self.province = province
 
+    def __repr__(self):
+        return 'Unit(%s, %s, %s)' % (self.power, self.unit_type, self.province)
 
-class BaseOrder():
-    def __init__(self, unit):
-        self.unit = unit
-        self.note = None
+    def __str__(self):
+        result = ''
+        result += str(self.power) + ' '
+        result += str(self.unit_type) + ' '
+        result += str(self.province)
+        return result
 
 
 class HoldOrder():
@@ -228,5 +234,6 @@ class MoveByConvoyOrder():
 
 
 if __name__ == '__main__':
-    c = ConvoyOrder((ENG, FLT, LON), (ENG, AMY, LVP), BRE)
-    print(c)
+    unit = Unit(ENG, FLT, LON)
+    h = HoldOrder(unit)
+    print(h)

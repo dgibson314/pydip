@@ -19,7 +19,7 @@ class Gameboard():
     (probably) by being passed NOW and SCO messages from the DAIDE server.
     - supply_centers    Mapping from powers to a list of SCs they have
                         after each Fall Retreat turn
-    - units             Mapping from powers to a list of tuples, each of
+    - units             Mapping from powers to a list of Units, each of
                         the form (power, unit_type, province)
     - year              Current year, e.g. 1901, 1902, etc.
     - season            One of:
@@ -33,9 +33,9 @@ class Gameboard():
     Message format which can then be sent to the DAIDE server. Once the
     server has adjudicated, the results should be passed back to this
     class, which then updates the current positions.
-    - orders            Mapping from units to orders, units consisting of
+    - orders            Mapping from Units to Orders, Units consisting of
                         the form (power, unit_type, province)
-    - retreat_opts      Mapping from units that must retreat to a list
+    - retreat_opts      Mapping from Units that must retreat to a list
                         of provinces they're able to retreat to. An
                         empty list signals the unit has no possible
                         retreats.
@@ -63,7 +63,7 @@ class Gameboard():
             # Initializing self.units to power<->[]
             self.units[power] = []
 
-        # Adding supply centers
+        # Adding supply centerstuples
         sc_section = folded_msg[2][0]
         for sc_lst in sc_section:
             power = sc_lst[0]
@@ -116,7 +116,7 @@ class Gameboard():
             # add updated unit
             unit_type = position[1]
             province = position[2]
-            unit = (power, unit_type, province)
+            unit = Unit(power, unit_type, province)
             self.units[power].append(unit)
 
             # Update MRT retreat options, if necessary
@@ -144,7 +144,18 @@ class Gameboard():
         return self.supply_centers[power]
 
     def get_orders(self):
+        '''
+        Returns a Message corresponding to a list of orders in DAIDE format,
+        i.e. (order) (order) ...
+        The client will need to append this Message to a 'SUB' token before
+        submitting to the server. Alternatively, the client can append the
+        Message to 'SUB (turn)' for additional peace-of-mind.
+        See section 3 of the DAIDE syntax document for more details.
+        '''
         units = self.get_own_units()
+        pass
+
+    def get_orders_message(self):
         pass
 
     def add_order(self, order):
@@ -152,9 +163,14 @@ class Gameboard():
         Adds Order to the self.orders mapping, removing
         any prior orders that belong to the same unit.
         '''
+        # TODO: handle possibility of KeyError?
+        unit = order.unit
+        self.orders[unit] = order
 
 
 class Unit():
+    # TODO: would it be better for this to be a named-tuple?
+    # May want to add 'note' attribute later?
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
@@ -170,6 +186,9 @@ class Unit():
         result += str(self.province)
         return result
 
+    def tokenize(self):
+        return Message(self.power, self.unit_type, self.province)
+
 
 class HoldOrder():
     def __init__(self, unit):
@@ -180,6 +199,9 @@ class HoldOrder():
 
     def __str__(self):
         return "Hold(%s)" % (self.unit)
+
+    def tokenize(self):
+        pass
 
 
 class MoveOrder():
@@ -242,5 +264,4 @@ class MoveByConvoyOrder():
 
 
 if __name__ == '__main__':
-    m = MoveOrder(Unit(ENG, FLT, LON), NTH)
-    print(m)
+    pass

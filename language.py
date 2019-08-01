@@ -20,7 +20,7 @@ class Token():
         return Message(self)
 
     def __add__(self, other):
-        raise NotImplementedError
+        return(Message(self) ++ other)
 
     @classmethod
     def integer(cls, _int):
@@ -134,14 +134,18 @@ class Message(list):
         return self + Message(BRA) + Message(*args) + Message(KET)
 
     def __add__(self, *args):
+        # TODO: can we do some more comprehensive error checking, please?
         '''
         >>> M = Message(YES, BRA)
         >>> N = Message(OBS, KET)
-        >>> O = M + N
-        >>> O.pretty_print()
+        >>> print(M + N)
         YES ( OBS )
         '''
         self.extend(*args)
+        return self
+
+    def __iadd__(self, token):
+        self.extend(token)
         return self
 
     def wrap(self):

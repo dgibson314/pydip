@@ -155,14 +155,8 @@ class BaseClient():
         raise NotImplementedError
 
     def handle_MDF(self, MDF_msg):
-        if self.power:
-            try:
-                self.map = Gameboard(self.power, MDF_msg)
-                self.send_dcsp(YES(MAP(self.variant)))
-            except Exception as e:
-                self.send_dcsp(REJ(MAP(self.variant)))
-                self.close()
-                print(e)
+        self.map = Gameboard(self.power, MDF_msg)
+        self.send_dcsp(YES(MAP(self.variant)))
 
     def handle_MAP(self, msg):
         map_name = msg.fold()[1][0]
@@ -176,6 +170,7 @@ class BaseClient():
         # TODO: right now very basic handling of variant options
         folded_HLO = msg.fold()
         self.power = folded_HLO[1][0]
+        self.map.power_played = self.power
         self.passcode = folded_HLO[2][0]
         self.press = folded_HLO[3][0][1]
 
@@ -185,6 +180,15 @@ class BaseClient():
 
     def generate_orders(self):
         raise NotImplementedError
+
+    def submit_orders(self):
+        '''
+        Submit orders to the server. The Message takes the form of
+        'SUB (order) (order) ...'
+        See section 3 of the DAIDE syntax document for more details.
+        '''
+        orders = self.map.get_orders()
+        self.send_dcsp(SUB + orders)
 
 
 if __name__ == '__main__':

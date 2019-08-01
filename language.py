@@ -19,6 +19,9 @@ class Token():
         '''
         return Message(self)
 
+    def __add__(self, other):
+        raise NotImplementedError
+
     @classmethod
     def integer(cls, _int):
         return cls(0x0000 + _int, _int)
@@ -33,27 +36,17 @@ class Token():
 
     @classmethod
     def byte(cls, _byte):
-        pass
+        raise NotImplementedError
 
     def __int__(self):
         return self._hex
 
     def __repr__(self):
-        return 'Token(%s, %s)' % (self._hex, self.tla)
-
-    '''
-    def __repr__(self):
-        result = ''
         cat = self.get_category()
-        if (cat == 'BRACKET'):
-            if (self.tla == 'BRA'):
-                result += '('
-            else:
-                result += ')'
+        if cat == 'TEXT':
+            return 'Token(%s, %s)' % (self._hex, '\'' + self.tla + '\'')
         else:
-            result += self.tla
-        return result
-        '''
+            return 'Token(%s, %s)' % (self._hex, self.tla)
 
     def __str__(self):
         if self.tla == 'BRA':
@@ -72,22 +65,6 @@ class Token():
         else:
             category = init.categories[cat_byte]
         return category
-
-    def pretty_print(self):
-        cat = self.get_category()
-
-        if (cat == 'BRACKET'):
-            if (self.tla == 'BRA'):
-                print('(')
-            else:
-                print(')')
-        else:
-            print(self.tla)
-
-    def raw_print(self):
-        result = 'Token('
-        result += hex(self._hex) + ', ' + str(self.tla) + ')'
-        return result
 
 
 class Message(list):
@@ -238,6 +215,13 @@ class Message(list):
         return result
 
     def __repr__(self):
+        result = 'Message('
+        result += (", ".join([repr(x) for x in self]))
+        result += ')'
+        return result
+
+    '''
+    def __repr__(self):
         msg = ''
         string_msg = '\''
 
@@ -255,6 +239,26 @@ class Message(list):
                 else:
                     msg += str(token.tla) + ' '
         return msg
+'''
+
+    def __str__(self):
+        result = ''
+        string_msg = '\''
+
+        for token in self:
+            if (token.get_category() == 'TEXT'):
+                string_msg += token.tla
+            else:
+                if (string_msg != '\''):
+                    result += string_msg + '\' '
+                    string_msg = '\''
+                if (token.tla == 'BRA'):
+                    result += '( '
+                elif (token.tla == 'KET'):
+                    result += ') '
+                else:
+                    result += str(token.tla) + ' '
+        return result
 
 
 # Brackets

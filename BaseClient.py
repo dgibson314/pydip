@@ -171,7 +171,6 @@ class BaseClient():
             self.send_dcsp(+MDF)
         elif (map_name == 'STANDARD'):
             self.reply_YES(msg)
-            self.close()
 
     def handle_HLO(self, msg):
         # TODO: right now very basic handling of variant options

@@ -149,14 +149,13 @@ class Gameboard():
         i.e. (order) (order) ...
         The client will need to append this Message to a 'SUB' token before
         submitting to the server. Alternatively, the client can append the
-        Message to 'SUB (turn)' for additional peace-of-mind.
+        Message to 'SUB (turn)' for additional peace of mind.
         See section 3 of the DAIDE syntax document for more details.
         '''
-        units = self.get_own_units()
-        pass
-
-    def get_orders_message(self):
-        pass
+        result = Message()
+        for _, order in self.orders.items():
+            result += order.get_message()
+        return result
 
     def add_order(self, order):
         ''' 
@@ -169,8 +168,6 @@ class Gameboard():
 
 
 class Unit():
-    # TODO: would it be better for this to be a named-tuple?
-    # May want to add 'note' attribute later?
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
@@ -273,7 +270,10 @@ class MoveByConvoyOrder():
 
 
 if __name__ == '__main__':
-    unit = Unit(ENG, FLT, LON)
-    sup_unit = Unit(ENG, AMY, LVP)
-    m = SupportHoldOrder(unit, sup_unit)
-    print(m.get_message())
+    h1 = HoldOrder(Unit(ENG, FLT, LON))
+    h2 = HoldOrder(Unit(ENG, AMY, LVP))
+    orders = [h1, h2]
+    msg = Message()
+    for order in orders:
+        msg += order.get_message()
+    print(msg)

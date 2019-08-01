@@ -147,7 +147,7 @@ class Gameboard():
         units = self.get_own_units()
         pass
 
-    def add(self, order):
+    def add_order(self, order):
         ''' 
         Adds Order to the self.orders mapping, removing
         any prior orders that belong to the same unit.
@@ -176,7 +176,7 @@ class HoldOrder():
         self.unit = unit
 
     def __repr__(self):
-        return "HoldOrder(%s)" % (self.unit)
+        return "HoldOrder(%s)" % (repr(self.unit))
 
     def __str__(self):
         return "Hold(%s)" % (self.unit)
@@ -188,7 +188,7 @@ class MoveOrder():
         self.dest = destination
 
     def __repr__(self):
-        return "MoveOrder(%s, %s)" % (self.unit, self.dest)
+        return "MoveOrder(%s, %s)" % (repr(self.unit), self.dest)
 
     def __str__(self):
         return "Move(%s -> %s)" % (self.unit, self.dest)
@@ -200,7 +200,7 @@ class SupportHoldOrder():
         self.supported = sup_unit
 
     def __repr__(self):
-        return "SupportHoldOrder(%s, %s)" % (self.unit, self.supported)
+        return "SupportHoldOrder(%s, %s)" % (repr(self.unit), repr(self.supported))
 
     def __str__(self):
         return "SupportHold(%s | %s)" % (self.unit, self.supported)
@@ -213,7 +213,7 @@ class SupportMoveOrder():
         self.dest = destination
 
     def __repr__(self):
-        return "SupportMoveOrder(%s, %s, %s)" % (self.unit, self.supported, self.dest)
+        return "SupportMoveOrder(%s, %s, %s)" % (repr(self.unit), repr(self.supported), self.dest)
 
     def __str__(self):
         return "SupportMove(%s | %s -> %s)" % (self.unit, self.supported, self.dest)
@@ -226,7 +226,7 @@ class ConvoyOrder():
         self.dest = destination
 
     def __repr__(self):
-        return "ConvoyOrder(%s, %s)" % (self.unit, self.cvy_unit, self.dest)
+        return "ConvoyOrder(%s, %s)" % (repr(self.unit), repr(self.cvy_unit), self.dest)
 
     def __str__(self):
         return "Convoy(%s ^ %s -> %s)" % (self.unit, self.cvy_unit, self.dest)
@@ -242,6 +242,5 @@ class MoveByConvoyOrder():
 
 
 if __name__ == '__main__':
-    unit = Unit(ENG, FLT, LON)
-    h = HoldOrder(unit)
-    print(h)
+    m = MoveOrder(Unit(ENG, FLT, LON), NTH)
+    print(m)

@@ -189,6 +189,9 @@ class Unit():
     def tokenize(self):
         return Message(self.power, self.unit_type, self.province)
 
+    def wrap(self):
+        return self.tokenize().wrap()
+
 
 class HoldOrder():
     def __init__(self, unit):
@@ -200,8 +203,8 @@ class HoldOrder():
     def __str__(self):
         return "Hold(%s)" % (self.unit)
 
-    def tokenize(self):
-        pass
+    def get_message(self):
+        return (self.unit.wrap() ++ HLD).wrap()
 
 
 class MoveOrder():
@@ -215,17 +218,23 @@ class MoveOrder():
     def __str__(self):
         return "Move(%s -> %s)" % (self.unit, self.dest)
 
+    def get_message(self):
+        return (self.unit.wrap() ++ MTO ++ self.dest).wrap()
+
 
 class SupportHoldOrder():
-    def __init__(self, unit, sup_unit):
+    def __init__(self, unit, supported):
         self.unit = unit
-        self.supported = sup_unit
+        self.supported = supported
 
     def __repr__(self):
         return "SupportHoldOrder(%s, %s)" % (repr(self.unit), repr(self.supported))
 
     def __str__(self):
         return "SupportHold(%s | %s)" % (self.unit, self.supported)
+
+    def get_message(self):
+        return (self.unit.wrap() ++ SUP + self.supported.wrap()).wrap()
 
 
 class SupportMoveOrder():
@@ -264,4 +273,7 @@ class MoveByConvoyOrder():
 
 
 if __name__ == '__main__':
-    pass
+    unit = Unit(ENG, FLT, LON)
+    sup_unit = Unit(ENG, AMY, LVP)
+    m = SupportHoldOrder(unit, sup_unit)
+    print(m.get_message())

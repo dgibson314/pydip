@@ -41,8 +41,8 @@ class Gameboard():
                         retreats.
 
     '''
-    def __init__(self, power, MDF_message):
-        self.power_played = power
+    def __init__(self, power_played, MDF_message):
+        self.power_played = power_played
         self.powers = []
         self.home_centers = {}
         self.adjacencies = {}
@@ -63,7 +63,7 @@ class Gameboard():
             # Initializing self.units to power<->[]
             self.units[power] = []
 
-        # Adding supply centerstuples
+        # Adding supply center tuples
         sc_section = folded_msg[2][0]
         for sc_lst in sc_section:
             power = sc_lst[0]
@@ -269,11 +269,48 @@ class MoveByConvoyOrder():
         pass
 
 
+class RetreatOrder():
+    def __init__(self, unit, destination):
+        self.unit = unit
+        self.dest = destination
+
+    def __repr__(self):
+        return "RetreatOrder(%s, %s)" % (repr(self.unit), self.dest)
+
+    def __str__(self):
+        return "Retreat(%s -> %s)" % (self.unit, self.dest)
+
+    def get_message(self):
+        return (self.unit.wrap() ++ RTO ++ self.dest)
+
+
+class DisbandOrder():
+    def __init__(self, unit):
+        self.unit = unit
+
+    def __repr__(self):
+        return "DisbandOrder(%s)" % repr(self.unit)
+
+    def __str__(self):
+        return "Disband(%s)" % self.unit
+
+    def get_message(self):
+        return (self.unit.wrap() ++ DSB)
+
+
+class WaiveOrder():
+    def __init__(self, power):
+        self.power = power
+
+    def __repr__(self):
+        return "WaiveOrder(%s)" % self.power
+
+    def __str__(self):
+        return "Waive(%s)" % self.power
+
+    def get_message(self):
+        return self.power + WVE
+
+
 if __name__ == '__main__':
-    h1 = HoldOrder(Unit(ENG, FLT, LON))
-    h2 = HoldOrder(Unit(ENG, AMY, LVP))
-    orders = [h1, h2]
-    msg = Message()
-    for order in orders:
-        msg += order.get_message()
-    print(msg)
+    pass

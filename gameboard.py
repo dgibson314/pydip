@@ -163,6 +163,7 @@ class Gameboard():
         any prior orders that belong to the same unit.
         '''
         # TODO: handle possibility of KeyError?
+        # TODO: order validation? I.e. are unit and dest adjacent?
         unit = order.unit
         self.orders[unit] = order
 
@@ -190,8 +191,23 @@ class Unit():
         return self.tokenize().wrap()
 
 
-class HoldOrder():
+class BaseOrder():
+    def __init__(self):
+        self.note = None
+
+    def __str__(self):
+        raise NotImplementedError
+
+    def __repr__(self):
+        raise NotImplementedError
+
+    def get_message(self):
+        raise NotImplementedError
+
+
+class HoldOrder(BaseOrder):
     def __init__(self, unit):
+        BaseOrder.__init__(self)
         self.unit = unit
 
     def __repr__(self):
@@ -206,6 +222,7 @@ class HoldOrder():
 
 class MoveOrder():
     def __init__(self, unit, destination):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.dest = destination
 
@@ -221,6 +238,7 @@ class MoveOrder():
 
 class SupportHoldOrder():
     def __init__(self, unit, supported):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.supported = supported
 
@@ -236,6 +254,7 @@ class SupportHoldOrder():
 
 class SupportMoveOrder():
     def __init__(self, unit, sup_unit, destination):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.supported = sup_unit
         self.dest = destination
@@ -249,6 +268,7 @@ class SupportMoveOrder():
 
 class ConvoyOrder():
     def __init__(self, unit, cvy_unit, destination):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.cvy_unit = cvy_unit
         self.dest = destination
@@ -262,6 +282,7 @@ class ConvoyOrder():
 
 class MoveByConvoyOrder():
     def __init__(self, unit, path):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.path = path
 
@@ -271,6 +292,7 @@ class MoveByConvoyOrder():
 
 class RetreatOrder():
     def __init__(self, unit, destination):
+        BaseOrder.__init__(self)
         self.unit = unit
         self.dest = destination
 
@@ -313,4 +335,5 @@ class WaiveOrder():
 
 
 if __name__ == '__main__':
-    pass
+    h = HoldOrder(Unit(ENG, FLT, LON))
+    print(h.note)

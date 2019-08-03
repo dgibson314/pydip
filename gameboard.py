@@ -135,7 +135,13 @@ class Gameboard():
         Updates the corresponding Order with the result.
         See section (iv) of the DAIDE Syntax document for more details.
         '''
-        raise NotImplementedError
+        folded_ORD = ORD_message.fold()
+        turn = tuple(folded_ORD[1])
+        ORD_key = tuple(folded_ORD[2])
+        result = folded_ORD[3] if len(folded_ORD[3]) == 3 else tuple(folded_ORD[3])
+        for order in self.orders[turn]:
+            if order.key == ORD_key:
+                order.result = result
 
     def get_units(self, power):
         return self.units[power]
@@ -153,7 +159,7 @@ class Gameboard():
         The client will need to append this Message to a 'SUB' token before
         submitting to the server. Alternatively, the client can append the
         Message to 'SUB (turn)' for additional peace of mind.
-        See section 3 of the DAIDE syntax document for more details.
+        See section (iii) of the DAIDE syntax document for more details.
         '''
         result = Message()
         turn = self.current_turn()
@@ -176,7 +182,7 @@ class Gameboard():
         dislodged = []
         turn = self.current_turn()
         for order in self.orders[turn]:
-            if order.note == RET:
+            if order.result == RET:
                 dislodged.append(order.unit)
         return dislodged
 
@@ -204,7 +210,7 @@ class Unit():
 
 class BaseOrder():
     def __init__(self):
-        self.note = None
+        self.result = None
         self.key = None
 
     def __str__(self):

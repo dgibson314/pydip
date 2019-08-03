@@ -150,13 +150,6 @@ class Gameboard():
         else:
             raise NotImplementedError
 
-    def clear_orders(self):
-        # TODO: probably not needed or needs to be refactored
-        self.orders = {}
-        owned_units = self.get_own_units()
-        for unit in owned_units:
-            self.orders[unit] = []
-
     def get_units(self, power):
         return self.units[power]
 

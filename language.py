@@ -161,11 +161,11 @@ class Message(list):
     def fold(self):
         '''
         >>> YES(OBS).fold()
-        [YES, [OBS]]
+        [Token(18460, YES), [Token(18447, OBS)]]
         >>> Message().fold()
         []
-        >>> YES(MAP('standard'))
-        [YES, [MAP, ['standard']]]
+        >>> YES(MAP('standard')).fold()
+        [Token(18460, YES), [Token(18441, MAP), ['standard']]]
         '''
         if self.count(BRA) != self.count(KET):
             raise ValueError('unbalanced parantheses')
@@ -223,27 +223,6 @@ class Message(list):
         result += (", ".join([repr(x) for x in self]))
         result += ')'
         return result
-
-    '''
-    def __repr__(self):
-        msg = ''
-        string_msg = '\''
-
-        for token in self:
-            if (token.get_category() == 'TEXT'):
-                string_msg += token.tla
-            else:
-                if (string_msg != '\''):
-                    msg += string_msg + '\' '
-                    string_msg = '\''
-                if (token.tla == 'BRA'):
-                    msg += '( '
-                elif (token.tla == 'KET'):
-                    msg += ') '
-                else:
-                    msg += str(token.tla) + ' '
-        return msg
-'''
 
     def __str__(self):
         result = ''

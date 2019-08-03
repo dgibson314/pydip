@@ -343,6 +343,38 @@ class DisbandOrder():
         return (self.unit.wrap() ++ DSB)
 
 
+class BuildOrder():
+    def __init__(self, unit):
+        BaseOrder.__init__(self)
+        self.unit = unit
+        self.key = (unit.key, BLD)
+
+    def __repr__(self):
+        return "BuildOrder(%s)" % repr(self.unit)
+
+    def __str__(self):
+        return "Build(%s)" % self.unit
+
+    def message(self):
+        return (self.unit.wrap() ++ BLD)
+
+
+class RemoveOrder():
+    def __init__(self, unit):
+        BaseOrder.__init__(self)
+        self.unit = unit
+        self.key = (unit.key, REM)
+
+    def __repr__(self):
+        return "RemoveOrder(%s)" % repr(self.unit)
+
+    def __str__(self):
+        return "Remove(%s)" % self.unit
+
+    def message(self):
+        return (self.unit.wrap() ++ REM)
+
+
 class WaiveOrder():
     def __init__(self, power):
         BaseOrder.__init__(self)

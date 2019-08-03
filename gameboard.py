@@ -186,6 +186,7 @@ class Unit():
         self.power = power
         self.unit_type = unit_type
         self.province = province
+        self.key = (power, unit_type, province)
 
     def __repr__(self):
         return "Unit(%s, %s, %s)" % (self.power, self.unit_type, self.province)
@@ -204,12 +205,16 @@ class Unit():
 class BaseOrder():
     def __init__(self):
         self.note = None
+        self.key = None
 
     def __str__(self):
         raise NotImplementedError
 
     def __repr__(self):
         raise NotImplementedError
+
+    def __eq__(self, other):
+        return self.key == other.key
 
     def message(self):
         raise NotImplementedError
@@ -219,6 +224,7 @@ class HoldOrder(BaseOrder):
     def __init__(self, unit):
         BaseOrder.__init__(self)
         self.unit = unit
+        self.key = (unit.key, HLD)
 
     def __repr__(self):
         return "HoldOrder(%s)" % (repr(self.unit))
@@ -235,6 +241,7 @@ class MoveOrder():
         BaseOrder.__init__(self)
         self.unit = unit
         self.dest = destination
+        self.key = (unit.key, MTO, destination)
 
     def __repr__(self):
         return "MoveOrder(%s, %s)" % (repr(self.unit), self.dest)
@@ -251,6 +258,7 @@ class SupportHoldOrder():
         BaseOrder.__init__(self)
         self.unit = unit
         self.supported = supported
+        self.key = (unit.key, SUP, supported.key)
 
     def __repr__(self):
         return "SupportHoldOrder(%s, %s)" % (repr(self.unit), repr(self.supported))
@@ -263,11 +271,12 @@ class SupportHoldOrder():
 
 
 class SupportMoveOrder():
-    def __init__(self, unit, sup_unit, destination):
+    def __init__(self, unit, supported, destination):
         BaseOrder.__init__(self)
         self.unit = unit
-        self.supported = sup_unit
+        self.supported = supported
         self.dest = destination
+        self.key = (unit.key, SUP, supported.key, MTO, destination)
 
     def __repr__(self):
         return "SupportMoveOrder(%s, %s, %s)" % (repr(self.unit), repr(self.supported), self.dest)
@@ -282,6 +291,7 @@ class ConvoyOrder():
         self.unit = unit
         self.cvy_unit = cvy_unit
         self.dest = destination
+        self.key = (unit.key, CVY, cvy_unit.key, CTO, destination)
 
     def __repr__(self):
         return "ConvoyOrder(%s, %s)" % (repr(self.unit), repr(self.cvy_unit), self.dest)
@@ -297,7 +307,7 @@ class MoveByConvoyOrder():
         self.path = path
 
     def __repr__(self):
-        pass
+        raise NotImplementedError
 
 
 class RetreatOrder():
@@ -305,6 +315,7 @@ class RetreatOrder():
         BaseOrder.__init__(self)
         self.unit = unit
         self.dest = destination
+        self.key = (unit.key, RTO, destination)
 
     def __repr__(self):
         return "RetreatOrder(%s, %s)" % (repr(self.unit), self.dest)
@@ -320,6 +331,7 @@ class DisbandOrder():
     def __init__(self, unit):
         BaseOrder.__init__(self)
         self.unit = unit
+        self.key = (unit.key, DSB)
 
     def __repr__(self):
         return "DisbandOrder(%s)" % repr(self.unit)
@@ -335,6 +347,7 @@ class WaiveOrder():
     def __init__(self, power):
         BaseOrder.__init__(self)
         self.power = power
+        self.key = (power, WVE)
 
     def __repr__(self):
         return "WaiveOrder(%s)" % self.power
@@ -348,3 +361,4 @@ class WaiveOrder():
 
 if __name__ == '__main__':
     unit = Unit(ENG, FLT, LON)
+    h = HoldOrder(unit)

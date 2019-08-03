@@ -33,8 +33,8 @@ class Gameboard():
     Message format which can then be sent to the DAIDE server. Once the
     server has adjudicated, the results should be passed back to this
     class, which then updates the current positions.
-    - orders            Mapping from Units to Orders, Units consisting of
-                        the form (power, unit_type, province)
+    - orders            Mapping from turns to a list of Orders, i.e.
+                        (SPR 1901): [HoldOrder(Unit(...)), MoveOrder(Unit(...))...]
     - retreat_opts      Mapping from Units that must retreat to a list
                         of provinces they're able to retreat to. An
                         empty list signals the unit has no possible
@@ -151,6 +151,7 @@ class Gameboard():
             raise NotImplementedError
 
     def clear_orders(self):
+        # TODO: probably not needed or needs to be refactored
         self.orders = {}
         owned_units = self.get_own_units()
         for unit in owned_units:
@@ -175,25 +176,28 @@ class Gameboard():
         See section 3 of the DAIDE syntax document for more details.
         '''
         result = Message()
-        for _, order in self.orders.items():
-            result += order.get_message()
+        turn = self.current_turn()
+        for order in self.orders[turn]:
+            result += order.message()
         return result
 
     def add_order(self, order):
         '''
         Adds Order to the self.orders mapping, removing
-        any prior orders that belong to the same unit.
+        any prior order that command the same unit.
         '''
-        # TODO: handle possibility of KeyError?
-        # TODO: order validation? I.e. are unit and dest adjacent?
-        unit = order.unit
-        self.orders[unit] = order
+        turn = self.current_turn()
+        for x in self.orders[turn]:
+            if x.unit == order.unit:
+                self.orders[turn].remove(x)
+        self.orders[turn].append(order)
 
     def get_dislodged_units(self):
         dislodged = []
-        for unit, order in self.orders.items():
+        turn = self.current_turn()
+        for order in self.orders[turn]:
             if order.note == RET:
-                dislodged.append(unit)
+                dislodged.append(order.unit)
         return dislodged
 
 
@@ -204,13 +208,10 @@ class Unit():
         self.province = province
 
     def __repr__(self):
-        return 'Unit(%s, %s, %s)' % (self.power, self.unit_type, self.province)
+        return "Unit(%s, %s, %s)" % (self.power, self.unit_type, self.province)
 
     def __str__(self):
-        result = ''
-        result += str(self.power) + ' '
-        result += str(self.unit_type) + ' '
-        result += str(self.province)
+        return "%s %s %s" % (str(self.power), str(self.unit_type), str(self.province))
         return result
 
     def tokenize(self):
@@ -230,7 +231,7 @@ class BaseOrder():
     def __repr__(self):
         raise NotImplementedError
 
-    def get_message(self):
+    def message(self):
         raise NotImplementedError
 
 
@@ -245,7 +246,7 @@ class HoldOrder(BaseOrder):
     def __str__(self):
         return "Hold(%s)" % (self.unit)
 
-    def get_message(self):
+    def message(self):
         return (self.unit.wrap() ++ HLD).wrap()
 
 
@@ -261,7 +262,7 @@ class MoveOrder():
     def __str__(self):
         return "Move(%s -> %s)" % (self.unit, self.dest)
 
-    def get_message(self):
+    def message(self):
         return (self.unit.wrap() ++ MTO ++ self.dest).wrap()
 
 
@@ -277,7 +278,7 @@ class SupportHoldOrder():
     def __str__(self):
         return "SupportHold(%s | %s)" % (self.unit, self.supported)
 
-    def get_message(self):
+    def message(self):
         return (self.unit.wrap() ++ SUP + self.supported.wrap()).wrap()
 
 
@@ -331,7 +332,7 @@ class RetreatOrder():
     def __str__(self):
         return "Retreat(%s -> %s)" % (self.unit, self.dest)
 
-    def get_message(self):
+    def message(self):
         return (self.unit.wrap() ++ RTO ++ self.dest)
 
 
@@ -346,7 +347,7 @@ class DisbandOrder():
     def __str__(self):
         return "Disband(%s)" % self.unit
 
-    def get_message(self):
+    def message(self):
         return (self.unit.wrap() ++ DSB)
 
 
@@ -361,9 +362,9 @@ class WaiveOrder():
     def __str__(self):
         return "Waive(%s)" % self.power
 
-    def get_message(self):
+    def message(self):
         return self.power + WVE
 
 
 if __name__ == '__main__':
-    pass
+    unit = Unit(ENG, FLT, LON)

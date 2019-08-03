@@ -146,7 +146,7 @@ class Gameboard():
     def get_units(self, power):
         return self.units[power]
 
-    def get_own_units(self, power):
+    def get_own_units(self):
         return self.get_units(self.power_played)
 
     def get_supply_centers(self, power):
@@ -166,6 +166,14 @@ class Gameboard():
         for order in self.orders[turn]:
             result += order.message()
         return result
+
+    def missing_orders(self):
+        turn = self.current_turn()
+        units_ordered = [order.unit for order in self.orders[turn]]
+        for unit in self.get_own_units():
+            if unit not in units_ordered:
+                return True
+        return False
 
     def add_order(self, order):
         '''

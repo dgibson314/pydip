@@ -176,7 +176,14 @@ class BaseClient():
 
     def handle_SCO(self, msg):
         self.map.process_SCO(msg)
-        self.generate_orders()
+
+    def handle_NOW(self, msg):
+        self.map.process_NOW(msg)
+        if self.map.missing_orders():
+            self.generate_orders()
+
+    def handle_ORD(self, msg):
+        self.map.process_ORD(msg)
 
     def generate_orders(self):
         raise NotImplementedError

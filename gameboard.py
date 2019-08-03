@@ -130,25 +130,12 @@ class Gameboard():
                 m_index = postion.index(MRT)
                 self.retreat_opts[unit] = position[m_index+1:]
 
-        # Clear out orders
-        # TODO: perhaps unneccessary/harmful, especially since
-        #   orders are holding onto notes from the ORD message.
-        self.clear_orders()
-
     def process_ORD(self, ORD_message):
         '''
         Updates the corresponding Order with the result.
         See section (iv) of the DAIDE Syntax document for more details.
         '''
-        folded_ORD = ORD_message.fold()
-        order = folded_ORD[2]
-        unit = order[0]
-        # Waive, e.g. (RUS WVE)
-        if unit.get_category == 'POWER':
-            # TODO
-            pass
-        else:
-            raise NotImplementedError
+        raise NotImplementedError
 
     def get_units(self, power):
         return self.units[power]

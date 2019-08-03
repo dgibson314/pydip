@@ -83,6 +83,12 @@ class Gameboard():
                 else:
                     self.adjacencies[province][unit_type] = adj[1:]
 
+    def current_turn(self):
+        '''
+        Returns the current turn in Message format
+        '''
+        return (self.season + self.year).wrap()
+
     def process_SCO(self, SCO_message):
         '''
         Updates the current supply center ownership by traversing an
@@ -98,7 +104,7 @@ class Gameboard():
                 self.supply_centers[power].append(center)
 
     def process_NOW(self, NOW_message):
-        ''' 
+        '''
         Updates current turn and unit positions by traversing a
         NOW message from the DAIDE server.
         '''
@@ -174,7 +180,7 @@ class Gameboard():
         return result
 
     def add_order(self, order):
-        ''' 
+        '''
         Adds Order to the self.orders mapping, removing
         any prior orders that belong to the same unit.
         '''
@@ -360,5 +366,4 @@ class WaiveOrder():
 
 
 if __name__ == '__main__':
-    h = HoldOrder(Unit(ENG, FLT, LON))
-    print(h.note)
+    pass

@@ -175,7 +175,7 @@ class BaseClient():
         self.press = folded_HLO[3][0][1]
 
     def handle_SCO(self, msg):
-        self.map.update_supply_centers(msg)
+        self.map.process_SCO(msg)
         self.generate_orders()
 
     def generate_orders(self):

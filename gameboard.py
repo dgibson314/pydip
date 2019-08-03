@@ -83,7 +83,7 @@ class Gameboard():
                 else:
                     self.adjacencies[province][unit_type] = adj[1:]
 
-    def update_supply_centers(self, SCO_message):
+    def process_SCO(self, SCO_message):
         '''
         Updates the current supply center ownership by traversing an
         SCO message from the DAIDE server. Unowned centers are listed
@@ -97,7 +97,7 @@ class Gameboard():
             for center in centers:
                 self.supply_centers[power].append(center)
 
-    def update_turn_and_units(self, NOW_message):
+    def process_NOW(self, NOW_message):
         ''' 
         Updates current turn and unit positions by traversing a
         NOW message from the DAIDE server.
@@ -125,8 +125,24 @@ class Gameboard():
                 self.retreat_opts[unit] = position[m_index+1:]
 
         # Clear out orders
-        # TODO: perhaps unneccessary/harmful?
+        # TODO: perhaps unneccessary/harmful, especially since
+        #   orders are holding onto notes from the ORD message.
         self.clear_orders()
+
+    def process_ORD(self, ORD_message):
+        '''
+        Updates the corresponding Order with the result.
+        See section (iv) of the DAIDE Syntax document for more details.
+        '''
+        folded_ORD = ORD_message.fold()
+        order = folded_ORD[2]
+        unit = order[0]
+        # Waive, e.g. (RUS WVE)
+        if unit.get_category == 'POWER':
+            # TODO
+            pass
+        else:
+            raise NotImplementedError
 
     def clear_orders(self):
         self.orders = {}
@@ -166,6 +182,13 @@ class Gameboard():
         # TODO: order validation? I.e. are unit and dest adjacent?
         unit = order.unit
         self.orders[unit] = order
+
+    def get_dislodged_units(self):
+        dislodged = []
+        for unit, order in self.orders.items():
+            if order.note == RET:
+                dislodged.append(unit)
+        return dislodged
 
 
 class Unit():
@@ -308,6 +331,7 @@ class RetreatOrder():
 
 class DisbandOrder():
     def __init__(self, unit):
+        BaseOrder.__init__(self)
         self.unit = unit
 
     def __repr__(self):
@@ -322,6 +346,7 @@ class DisbandOrder():
 
 class WaiveOrder():
     def __init__(self, power):
+        BaseOrder.__init__(self)
         self.power = power
 
     def __repr__(self):

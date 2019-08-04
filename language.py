@@ -109,7 +109,7 @@ class Message(list):
                 cat = init.categories[byte >> 8]
             token = None
             if (cat == 'INTEGER'):
-                token = (Token.integer(byte & 0x00ff))
+                token = (Token.integer(byte))
             elif (cat == 'TEXT'):
                 token = (Token.ascii(byte & 0x00ff))
             else:

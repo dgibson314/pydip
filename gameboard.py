@@ -196,7 +196,7 @@ class Gameboard():
                 self.orders[turn].remove(x)
         self.orders[turn].append(order)
 
-    def ordered(self, unit):
+    def is_ordered(self, unit):
         '''
         Checks if a unit has already had an Order
         attached to it.
@@ -206,6 +206,24 @@ class Gameboard():
             if order.unit == unit:
                 return True
         return False
+
+    def get_ordered(self):
+        '''
+        Returns list of units that have been ordered.
+        '''
+        turn = self.current_turn()
+        return [order.unit for order in self.orders[turn]]
+
+    def get_unordered(self):
+        '''
+        Returns list of units that have not yet been ordered.
+        '''
+        turn = self.current_turn()
+        unordered = []
+        for unit in self.get_own_units():
+            if not self.is_ordered(unit):
+                unordered.append(unit)
+        return unordered
 
     def get_dislodged_units(self):
         dislodged = []

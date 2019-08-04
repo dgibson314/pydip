@@ -28,6 +28,15 @@ class HoldBot(BaseClient):
         # Adjustment phase
         else:
             build_num = self.map.build_number()
+            # More units than sc's; need to remove some units
+            if build_num < 0:
+                unordered = self.map.get_unordered()
+                for i in range(abs(build_num)):
+                    self.map.add(RemoveOrder(unordered[i]))
+            # Somehow got more sc's; need to waive all builds
+            elif build_num > 0:
+                for i in range(build_num):
+                    self.map.add(WaiveOrder(self.power))
 
 
 if __name__ == '__main__':

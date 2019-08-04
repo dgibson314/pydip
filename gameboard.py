@@ -49,8 +49,9 @@ class Gameboard():
 
         self.supply_centers = {}
         self.units = {}
-        self.year = None
+        self.year = None    # int, not Token
         self.season = None
+        self.turn = None    # (season, year)
 
         self.orders = {}
         self.retreat_opts = {}
@@ -87,7 +88,7 @@ class Gameboard():
         '''
         Returns the current turn in Message format
         '''
-        return (self.season + self.year).wrap()
+        return (self.season + Token.integer(self.year)).wrap()
 
     def process_SCO(self, SCO_message):
         '''
@@ -107,17 +108,20 @@ class Gameboard():
         '''
         Updates current turn and unit positions by traversing a
         NOW message from the DAIDE server.
+        Also adds a new entry for orders to be added for the current
+        turn.
         '''
         folded_NOW = NOW_message.fold()
         self.season = folded_NOW[1][0]
         self.year = folded_NOW[1][1]
+        self.turn = (self.season, self.year)
+
+        # clear out old unit positions
+        self.clear_units()
 
         positions = folded_NOW[2:]
         for position in positions:
             power = position[0]
-
-            # clear out old unit positions
-            self.units[power] = []
 
             # add updated unit
             unit_type = position[1]
@@ -129,6 +133,9 @@ class Gameboard():
             if MRT in position:
                 m_index = position.index(MRT)
                 self.retreat_opts[unit] = position[m_index+1:]
+
+        # Add a new entry for orders to be added
+        self.orders[self.turn] = []
 
     def process_ORD(self, ORD_message):
         '''
@@ -142,6 +149,10 @@ class Gameboard():
         for order in self.orders[turn]:
             if order.key == ORD_key:
                 order.result = result
+
+    def clear_units(self):
+        for power in self.powers:
+            self.units[power] = []
 
     def get_units(self, power):
         return self.units[power]
@@ -162,8 +173,7 @@ class Gameboard():
         See section (iii) of the DAIDE syntax document for more details.
         '''
         result = Message()
-        turn = self.current_turn()
-        for order in self.orders[turn]:
+        for order in self.orders[self.turn]:
             result += order.message()
         return result
 
@@ -178,8 +188,7 @@ class Gameboard():
         return sc - units
 
     def missing_orders(self):
-        turn = self.current_turn()
-        units_ordered = [order.unit for order in self.orders[turn]]
+        units_ordered = [order.unit for order in self.orders[self.turn]]
         for unit in self.get_own_units():
             if unit not in units_ordered:
                 return True
@@ -190,19 +199,17 @@ class Gameboard():
         Adds Order to the self.orders mapping, removing
         any prior order that command the same unit.
         '''
-        turn = self.current_turn()
-        for x in self.orders[turn]:
+        for x in self.orders[self.turn]:
             if x.unit == order.unit:
                 self.orders[turn].remove(x)
-        self.orders[turn].append(order)
+        self.orders[self.turn].append(order)
 
     def is_ordered(self, unit):
         '''
         Checks if a unit has already had an Order
         attached to it.
         '''
-        turn = self.current_turn()
-        for order in self.orders[turn]:
+        for order in self.orders[self.turn]:
             if order.unit == unit:
                 return True
         return False
@@ -211,14 +218,12 @@ class Gameboard():
         '''
         Returns list of units that have been ordered.
         '''
-        turn = self.current_turn()
-        return [order.unit for order in self.orders[turn]]
+        return [order.unit for order in self.orders[self.turn]]
 
     def get_unordered(self):
         '''
         Returns list of units that have not yet been ordered.
         '''
-        turn = self.current_turn()
         unordered = []
         for unit in self.get_own_units():
             if not self.is_ordered(unit):
@@ -227,8 +232,7 @@ class Gameboard():
 
     def get_dislodged_units(self):
         dislodged = []
-        turn = self.current_turn()
-        for order in self.orders[turn]:
+        for order in self.orders[self.turn]:
             if order.result == RET:
                 dislodged.append(order.unit)
         return dislodged

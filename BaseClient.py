@@ -196,7 +196,8 @@ class BaseClient():
         See section 3 of the DAIDE syntax document for more details.
         '''
         orders = self.map.get_orders()
-        self.send_dcsp(SUB + orders)
+        print(orders)
+        self.send_dcsp(+SUB + orders)
 
 
 if __name__ == '__main__':

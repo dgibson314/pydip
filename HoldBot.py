@@ -17,6 +17,7 @@ class HoldBot(BaseClient):
 
     def generate_orders(self):
         units = self.map.get_own_units()
+        print(units)
         # Movement phase
         if self.map.season in [SPR, FAL]:
             for unit in units:

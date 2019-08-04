@@ -71,18 +71,18 @@ class Gameboard():
             self.home_centers[power] = sc_lst[1:]
 
         # Adding adjacencies
+        # See MDF section of DAIDE Syntax document
         adjacencies = folded_msg[3]
         for prov_adj in adjacencies:
             province = prov_adj[0]
             self.adjacencies[province] = {}
             adjs = prov_adj[1:]
             for adj in adjs:
-                unit_type = adj[0]
-                if isinstance(unit_type, list):
-                    # unit_type <-> [FLT coast]
-                    pass
-                else:
-                    self.adjacencies[province][unit_type] = adj[1:]
+                unit_type = tuple(adj[0]) if isinstance(adj[0], list) else adj[0]
+                # [province, [province, coast]] -> [province, (province, coast)]
+                adj_provs = [tuple(p) if isinstance(p, list) else p 
+                             for p in adj[1:]]
+                self.adjacencies[province][unit_type] = adj_provs
 
     def current_turn(self):
         '''

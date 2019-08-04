@@ -127,7 +127,7 @@ class Gameboard():
 
             # Update MRT retreat options, if necessary
             if MRT in position:
-                m_index = postion.index(MRT)
+                m_index = position.index(MRT)
                 self.retreat_opts[unit] = position[m_index+1:]
 
     def process_ORD(self, ORD_message):
@@ -167,6 +167,16 @@ class Gameboard():
             result += order.message()
         return result
 
+    def build_number(self):
+        '''
+        Calculates the difference between the number of supply centers
+        held and the number of units currently in play. Used during
+        WIN season for adjustements.
+        '''
+        sc = len(self.get_supply_centers(self.power_played))
+        units = len(self.get_own_units())
+        return sc - units
+
     def missing_orders(self):
         turn = self.current_turn()
         units_ordered = [order.unit for order in self.orders[turn]]
@@ -175,7 +185,7 @@ class Gameboard():
                 return True
         return False
 
-    def add_order(self, order):
+    def add(self, order):
         '''
         Adds Order to the self.orders mapping, removing
         any prior order that command the same unit.
@@ -185,6 +195,17 @@ class Gameboard():
             if x.unit == order.unit:
                 self.orders[turn].remove(x)
         self.orders[turn].append(order)
+
+    def ordered(self, unit):
+        '''
+        Checks if a unit has already had an Order
+        attached to it.
+        '''
+        turn = self.current_turn()
+        for order in self.orders[turn]:
+            if order.unit == unit:
+                return True
+        return False
 
     def get_dislodged_units(self):
         dislodged = []

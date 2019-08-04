@@ -181,6 +181,7 @@ class BaseClient():
         self.map.process_NOW(msg)
         if self.map.missing_orders():
             self.generate_orders()
+        self.submit_orders()
 
     def handle_ORD(self, msg):
         self.map.process_ORD(msg)

@@ -241,27 +241,29 @@ class Gameboard():
                 unordered.append(unit)
         return unordered
 
-    def get_dislodged_units(self):
-        dislodged = []
-        for order in self.orders[self.turn]:
-            if order.result == RET:
-                dislodged.append(order.unit)
-        return dislodged
-
 
 class Unit():
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
-        self.province = province
-        self.key = (power, unit_type, province)
+        # Example: Unit(RUS, FLT, (STP, SCS))
+        if isinstance(province, tuple):
+            self.province = province[0]
+            self.coast = province[1]
+        else:
+            self.province = province
+            self.coast = None
+        self.key = (self.power, self.unit_type, (self.province, self.coast) if
+                    self.coast else self.province)
 
     def __repr__(self):
         return "Unit(%s, %s, %s)" % (self.power, self.unit_type, self.province)
 
     def __str__(self):
-        return "%s %s %s" % (str(self.power), str(self.unit_type), str(self.province))
-        return result
+        if self.coast:
+            return "%s %s ( %s %s )" % (self.power, self.unit_type, self.province, self.coast)
+        else:
+            return "%s %s %s" % (self.power, self.unit_type, self.province)
 
     def tokenize(self):
         return Message(self.power, self.unit_type, self.province)
@@ -460,4 +462,6 @@ class WaiveOrder():
 
 
 if __name__ == '__main__':
-    pass
+    unit = Unit(RUS, FLT, (STP, SCS))
+    h = HoldOrder(unit)
+    print(h)

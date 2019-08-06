@@ -24,7 +24,7 @@ class HoldBot(BaseClient):
                 self.map.add(HoldOrder(unit))
         # Retreat phase
         elif self.map.season in [SUM, AUT]:
-            for unit, _ in self.map.retreat_opts.items():
+            for unit in self.map.get_dislodged():
                 self.map.add(DisbandOrder(unit))
         # Adjustment phase
         else:

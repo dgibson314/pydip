@@ -80,7 +80,7 @@ class Gameboard():
             for adj in adjs:
                 unit_type = tuple(adj[0]) if isinstance(adj[0], list) else adj[0]
                 # [province, [province, coast]] -> [province, (province, coast)]
-                adj_provs = [tuple(p) if isinstance(p, list) else p 
+                adj_provs = [tuple(p) if isinstance(p, list) else p
                              for p in adj[1:]]
                 self.adjacencies[province][unit_type] = adj_provs
 
@@ -213,6 +213,17 @@ class Gameboard():
             if order.unit == unit:
                 return True
         return False
+
+    def get_dislodged(self):
+        '''
+        Returns list of all owned units that need to
+        retreat.
+        '''
+        dislodged = []
+        for unit, _ in self.retreat_opts.items():
+            if unit.power == self.power_played:
+                dislodged.append(unit)
+        return dislodged
 
     def get_ordered(self):
         '''
@@ -449,5 +460,4 @@ class WaiveOrder():
 
 
 if __name__ == '__main__':
-    unit = Unit(ENG, FLT, LON)
-    h = HoldOrder(unit)
+    pass

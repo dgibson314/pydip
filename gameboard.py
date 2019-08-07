@@ -216,13 +216,13 @@ class Gameboard():
 
     def get_dislodged(self):
         '''
-        Returns list of all owned units that need to
-        retreat.
+        Returns list of tuples of all owned units that need to
+        retreat and their retreat options.
         '''
         dislodged = []
-        for unit, _ in self.retreat_opts.items():
+        for unit, opts in self.retreat_opts.items():
             if unit.power == self.power_played:
-                dislodged.append(unit)
+                dislodged.append((unit, opts))
         return dislodged
 
     def get_ordered(self):
@@ -246,18 +246,19 @@ class Unit():
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
-        # Example: Unit(RUS, FLT, (STP, SCS))
-        if isinstance(province, tuple):
+        if isinstance(province, list) or isinstance(province, tuple):
             self.province = province[0]
             self.coast = province[1]
         else:
             self.province = province
             self.coast = None
-        self.key = (self.power, self.unit_type, (self.province, self.coast) if
-                    self.coast else self.province)
+        if self.coast:
+            self.key = (self.power, self.unit_type, (self.province, self.coast))
+        else:
+            self.key = (self.power, self.unit_type, self.province)
 
     def __repr__(self):
-        return "Unit(%s, %s, %s)" % (self.power, self.unit_type, self.province)
+        return "Unit(%s, %s, %s, coast=%s)" % (self.power, self.unit_type, self.province, self.coast)
 
     def __str__(self):
         if self.coast:
@@ -266,7 +267,10 @@ class Unit():
             return "%s %s %s" % (self.power, self.unit_type, self.province)
 
     def tokenize(self):
-        return Message(self.power, self.unit_type, self.province)
+        if self.coast:
+            return Message(self.power, self.unit_type)(self.province, self.coast)
+        else:
+            return Message(self.power, self.unit_type, self.province)
 
     def wrap(self):
         return self.tokenize().wrap()
@@ -394,7 +398,7 @@ class RetreatOrder():
         return "Retreat(%s -> %s)" % (self.unit, self.dest)
 
     def message(self):
-        return (self.unit.wrap() ++ RTO ++ self.dest)
+        return (self.unit.wrap() ++ RTO ++ self.dest).wrap()
 
 
 class DisbandOrder():
@@ -410,7 +414,7 @@ class DisbandOrder():
         return "Disband(%s)" % self.unit
 
     def message(self):
-        return (self.unit.wrap() ++ DSB)
+        return (self.unit.wrap() ++ DSB).wrap()
 
 
 class BuildOrder():
@@ -426,7 +430,7 @@ class BuildOrder():
         return "Build(%s)" % self.unit
 
     def message(self):
-        return (self.unit.wrap() ++ BLD)
+        return (self.unit.wrap() ++ BLD).wrap()
 
 
 class RemoveOrder():
@@ -442,7 +446,7 @@ class RemoveOrder():
         return "Remove(%s)" % self.unit
 
     def message(self):
-        return (self.unit.wrap() ++ REM)
+        return (self.unit.wrap() ++ REM).wrap()
 
 
 class WaiveOrder():
@@ -458,10 +462,10 @@ class WaiveOrder():
         return "Waive(%s)" % self.power
 
     def message(self):
-        return self.power + WVE
+        return (self.power + WVE).wrap()
 
 
 if __name__ == '__main__':
-    unit = Unit(RUS, FLT, (STP, SCS))
+    unit = Unit(RUS, FLT, [STP, SCS])
     h = HoldOrder(unit)
     print(h)

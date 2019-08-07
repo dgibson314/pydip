@@ -10,8 +10,7 @@ from gameboard import *
 class HoldBot(BaseClient):
     '''
     A quite simple bot that issues hold orders to all
-    of its units. Any (unlikely) builds are waived, and
-    all dislodged units are disbanded.
+    of its units. Any (unlikely) builds are waived.
     '''
     def __init__(self, host='127.0.0.1', port=16713):
         BaseClient.__init__(self, host, port)
@@ -20,21 +19,22 @@ class HoldBot(BaseClient):
 
     def generate_orders(self):
         units = self.map.get_own_units()
-        print("UNITS: %s", units)
         # Movement phase
         if self.map.season in [SPR, FAL]:
             for unit in units:
                 self.map.add(HoldOrder(unit))
+                print(HoldOrder(unit))
         # Retreat phase
         elif self.map.season in [SUM, AUT]:
             for unit, opts in self.map.get_dislodged():
+                # No retreat options; disband unit.
+                if opts == []:
+                    self.map.add(DisbandOrder(unit))
                 # There is at least one province to retreat to.
                 # Just choose the first province available.
-                if len(opts) > 0:
-                    self.map.add(RetreatOrder(unit, opts[0]))
-                # Must disband, no retreat options
                 else:
-                    self.map.add(DisbandOrder(unit))
+                    self.map.add(RetreatOrder(unit, opts[0][0]))
+                    print(RetreatOrder(unit, opts))
         # Adjustment phase
         else:
             build_num = self.map.build_number()

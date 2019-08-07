@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import signal
+import sys
+
 from BaseClient import BaseClient
 from language import *
 from gameboard import *
@@ -17,15 +20,21 @@ class HoldBot(BaseClient):
 
     def generate_orders(self):
         units = self.map.get_own_units()
-        print(units)
+        print("UNITS: %s", units)
         # Movement phase
         if self.map.season in [SPR, FAL]:
             for unit in units:
                 self.map.add(HoldOrder(unit))
         # Retreat phase
         elif self.map.season in [SUM, AUT]:
-            for unit in self.map.get_dislodged():
-                self.map.add(DisbandOrder(unit))
+            for unit, opts in self.map.get_dislodged():
+                # There is at least one province to retreat to.
+                # Just choose the first province available.
+                if len(opts) > 0:
+                    self.map.add(RetreatOrder(unit, opts[0]))
+                # Must disband, no retreat options
+                else:
+                    self.map.add(DisbandOrder(unit))
         # Adjustment phase
         else:
             build_num = self.map.build_number()

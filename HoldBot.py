@@ -19,13 +19,16 @@ class HoldBot(BaseClient):
 
     def generate_orders(self):
         units = self.map.get_own_units()
+
         # Movement phase
         if self.map.season in [SPR, FAL]:
             for unit in units:
                 self.map.add(HoldOrder(unit))
-                print(HoldOrder(unit))
+
         # Retreat phase
         elif self.map.season in [SUM, AUT]:
+            # TODO
+            print(self.map.get_dislodged())
             for unit, opts in self.map.get_dislodged():
                 # No retreat options; disband unit.
                 if opts == []:
@@ -33,11 +36,13 @@ class HoldBot(BaseClient):
                 # There is at least one province to retreat to.
                 # Just choose the first province available.
                 else:
-                    self.map.add(RetreatOrder(unit, opts[0][0]))
-                    print(RetreatOrder(unit, opts))
+                    self.map.add(RetreatOrder(unit, opts[0]))
+
         # Adjustment phase
         else:
             build_num = self.map.build_number()
+            # TODO
+            print("%s: %s" % (self.power, build_num))
             # More units than sc's; need to remove some units
             if build_num < 0:
                 unordered = self.map.get_unordered()

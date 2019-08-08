@@ -96,6 +96,10 @@ class Gameboard():
         SCO message from the DAIDE server. Unowned centers are listed
         against the power name UNO.
         '''
+        # Clear out old supply centers
+        for power, _ in self.supply_centers.items():
+            self.supply_centers[power] = []
+
         folded_SCO = SCO_message.fold()
         for position in folded_SCO[1:]:
             power = position[0]
@@ -185,6 +189,10 @@ class Gameboard():
         '''
         sc = len(self.get_supply_centers(self.power_played))
         units = len(self.get_own_units())
+        print("%s" % self.power_played)
+        print(self.get_supply_centers(self.power_played))
+        print("SC: %s" % sc)
+        print("UNITS: %s" % units)
         return sc - units
 
     def missing_orders(self):
@@ -222,7 +230,7 @@ class Gameboard():
         dislodged = []
         for unit, opts in self.retreat_opts.items():
             if unit.power == self.power_played:
-                dislodged.append((unit, opts))
+                dislodged.append((unit, opts[0]))
         return dislodged
 
     def get_ordered(self):

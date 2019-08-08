@@ -1,0 +1,2473 @@
+
+<!-- saved from url=(0046)http://www.daide.org.uk/external/comproto.html -->
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word 9">
+<meta name="Originator" content="Microsoft Word 9">
+<link rel="File-List" href="http://www.daide.org.uk/external/index_files/filelist.xml">
+<title>The Diplomacy AIJudge Client-Server Protocol</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Andrew Rose</o:Author>
+  <o:LastAuthor>Andrew Rose</o:LastAuthor>
+  <o:Revision>34</o:Revision>
+  <o:TotalTime>708</o:TotalTime>
+  <o:Created>2002-03-18T18:50:00Z</o:Created>
+  <o:LastSaved>2003-12-08T14:34:00Z</o:LastSaved>
+  <o:Pages>12</o:Pages>
+  <o:Words>2404</o:Words>
+  <o:Characters>13706</o:Characters>
+  <o:Company>Data Connection Limited</o:Company>
+  <o:Lines>114</o:Lines>
+  <o:Paragraphs>27</o:Paragraphs>
+  <o:CharactersWithSpaces>16831</o:CharactersWithSpaces>
+  <o:Version>9.2720</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:ActiveWritingStyle Lang="EN-GB" VendorID="64" DLLVersion="131077"
+   NLCheck="1">3</w:ActiveWritingStyle>
+  <w:ActiveWritingStyle Lang="EN-GB" VendorID="64" DLLVersion="131078"
+   NLCheck="1">1</w:ActiveWritingStyle>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:Compatibility>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+  <w:GrammarState>Clean</w:GrammarState>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+span.GRAME
+	{mso-gram-e:yes;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+h1
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.3in;
+	margin-bottom:.0001pt;
+	text-indent:-.3in;
+	page-break-before:always;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	mso-list:l2 level1 lfo2;
+	tab-stops:list .3in;
+	border:none;
+	mso-border-top-alt:solid windowtext 3.0pt;
+	padding:0in;
+	mso-padding-alt:1.0pt 0in 0in 0in;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	text-transform:uppercase;
+	letter-spacing:-.5pt;
+	mso-font-kerning:0pt;
+	mso-ansi-language:EN-GB;
+	mso-bidi-font-weight:normal;}
+h2
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.4in;
+	margin-bottom:.0001pt;
+	text-indent:-.4in;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	mso-list:l2 level2 lfo2;
+	tab-stops:list .4in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;}
+h3
+	{mso-style-next:"Indented Para 1";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;
+	font-weight:normal;
+	text-decoration:underline;
+	text-underline:single;}
+h4
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:.6in;
+	text-indent:-.6in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	mso-list:l2 level4 lfo2;
+	tab-stops:list .6in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;
+	font-weight:normal;
+	text-decoration:underline;
+	text-underline:single;}
+h5
+	{mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:.7in;
+	text-indent:-.7in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	mso-outline-level:5;
+	mso-list:l2 level5 lfo2;
+	tab-stops:list .7in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-ansi-language:EN-GB;
+	font-weight:normal;}
+h6
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.8in;
+	text-indent:-.8in;
+	mso-pagination:widow-orphan lines-together;
+	mso-outline-level:6;
+	mso-list:l2 level6 lfo2;
+	tab-stops:list .8in;
+	font-size:11.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.9in;
+	text-indent:-.9in;
+	mso-pagination:widow-orphan lines-together;
+	mso-outline-level:7;
+	mso-list:l2 level7 lfo2;
+	tab-stops:list .9in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:1.0in;
+	text-indent:-1.0in;
+	mso-pagination:widow-orphan lines-together;
+	mso-outline-level:8;
+	mso-list:l2 level8 lfo2;
+	tab-stops:list 1.0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;
+	font-style:italic;}
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:1.1in;
+	text-indent:-1.1in;
+	mso-pagination:widow-orphan lines-together;
+	mso-outline-level:9;
+	mso-list:l2 level9 lfo2;
+	tab-stops:list 1.1in;
+	font-size:11.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.MsoHeader, li.MsoHeader, div.MsoHeader
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{margin:0in;
+	margin-bottom:.0001pt;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	tab-stops:center 3.0in right 6.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+span.MsoPageNumber
+	{mso-ansi-font-size:11.5pt;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;}
+p.IndentedPara1, li.IndentedPara1, div.IndentedPara1
+	{mso-style-name:"Indented Para 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.25in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.Bullets1, li.Bullets1, div.Bullets1
+	{mso-style-name:"Bullets 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l11 level1 lfo4;
+	tab-stops:list .5in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.Bullets2, li.Bullets2, div.Bullets2
+	{mso-style-name:"Bullets 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.0in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l4 level1 lfo6;
+	tab-stops:list 1.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.Bullets3, li.Bullets3, div.Bullets3
+	{mso-style-name:"Bullets 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l3 level1 lfo8;
+	tab-stops:list 1.5in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.Bullets4, li.Bullets4, div.Bullets4
+	{mso-style-name:"Bullets 4";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:2.0in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l7 level1 lfo10;
+	tab-stops:list 2.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ConditionalBreak, li.ConditionalBreak, div.ConditionalBreak
+	{mso-style-name:"Conditional Break";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:0in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	page-break-after:avoid;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.HangingPara1, li.HangingPara1, div.HangingPara1
+	{mso-style-name:"Hanging Para 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:.5in;
+	text-indent:-.5in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.HangingPara2, li.HangingPara2, div.HangingPara2
+	{mso-style-name:"Hanging Para 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:1.0in;
+	text-indent:-.5in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.HangingPara3, li.HangingPara3, div.HangingPara3
+	{mso-style-name:"Hanging Para 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:1.5in;
+	text-indent:-.5in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.HangingPara4, li.HangingPara4, div.HangingPara4
+	{mso-style-name:"Hanging Para 4";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:2.0in;
+	text-indent:-.5in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.IndentedPara2, li.IndentedPara2, div.IndentedPara2
+	{mso-style-name:"Indented Para 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:1.0in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.IndentedPara3, li.IndentedPara3, div.IndentedPara3
+	{mso-style-name:"Indented Para 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:1.5in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.IndentedPara4, li.IndentedPara4, div.IndentedPara4
+	{mso-style-name:"Indented Para 4";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:12.0pt;
+	margin-left:2.0in;
+	line-height:100%;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ListBullets0, li.ListBullets0, div.ListBullets0
+	{mso-style-name:"ListBullets 0";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ListBullets1, li.ListBullets1, div.ListBullets1
+	{mso-style-name:"ListBullets 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l10 level1 lfo12;
+	tab-stops:list .5in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ListBullets2, li.ListBullets2, div.ListBullets2
+	{mso-style-name:"ListBullets 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.0in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l12 level1 lfo14;
+	tab-stops:list 1.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ListBullets3, li.ListBullets3, div.ListBullets3
+	{mso-style-name:"ListBullets 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l9 level1 lfo16;
+	tab-stops:list 1.5in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.ListBullets4, li.ListBullets4, div.ListBullets4
+	{mso-style-name:"ListBullets 4";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:2.0in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	mso-list:l1 level1 lfo18;
+	tab-stops:list 2.0in;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.NumberedPara1, li.NumberedPara1, div.NumberedPara1
+	{mso-style-name:"Numbered Para 1";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.NumberedPara2, li.NumberedPara2, div.NumberedPara2
+	{mso-style-name:"Numbered Para 2";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.0in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.NumberedPara3, li.NumberedPara3, div.NumberedPara3
+	{mso-style-name:"Numbered Para 3";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:1.5in;
+	margin-bottom:.0001pt;
+	text-indent:-.5in;
+	mso-pagination:widow-orphan lines-together;
+	font-size:11.5pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+p.Title1, li.Title1, div.Title1
+	{mso-style-name:"Title 1";
+	mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:center;
+	mso-pagination:widow-orphan lines-together;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;
+	font-weight:bold;}
+p.Code, li.Code, div.Code
+	{mso-style-name:Code;
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan lines-together;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-GB;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:.5in .9in 1.0in .9in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:243878317;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1766893344 67698689 1698589644 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-number-format:none;
+	mso-level-text:"1\.2";
+	mso-level-tab-stop:.25in;
+	mso-level-number-position:left;
+	margin-left:.25in;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:311100529;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1094908632 -1341752796 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"ListBullets 4";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	margin-left:2.0in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l2
+	{mso-list-id:391539671;
+	mso-list-template-ids:1229596752;}
+@list l2:level1
+	{mso-level-style-link:"Heading 1";
+	mso-level-text:%1;
+	mso-level-tab-stop:.3in;
+	mso-level-number-position:left;
+	margin-left:.3in;
+	text-indent:-.3in;}
+@list l2:level2
+	{mso-level-style-link:"Heading 2";
+	mso-level-text:"%1\.%2";
+	mso-level-tab-stop:.4in;
+	mso-level-number-position:left;
+	margin-left:.4in;
+	text-indent:-.4in;}
+@list l2:level3
+	{mso-level-text:"%1\.%2\.%3";
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	margin-left:.5in;
+	text-indent:-.5in;}
+@list l2:level4
+	{mso-level-style-link:"Heading 4";
+	mso-level-text:"%1\.%2\.%3\.%4";
+	mso-level-tab-stop:.6in;
+	mso-level-number-position:left;
+	margin-left:.6in;
+	text-indent:-.6in;}
+@list l2:level5
+	{mso-level-style-link:"Heading 5";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5";
+	mso-level-tab-stop:.7in;
+	mso-level-number-position:left;
+	margin-left:.7in;
+	text-indent:-.7in;}
+@list l2:level6
+	{mso-level-style-link:"Heading 6";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6";
+	mso-level-tab-stop:.8in;
+	mso-level-number-position:left;
+	margin-left:.8in;
+	text-indent:-.8in;}
+@list l2:level7
+	{mso-level-style-link:"Heading 7";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7";
+	mso-level-tab-stop:.9in;
+	mso-level-number-position:left;
+	margin-left:.9in;
+	text-indent:-.9in;}
+@list l2:level8
+	{mso-level-style-link:"Heading 8";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8";
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-1.0in;}
+@list l2:level9
+	{mso-level-style-link:"Heading 9";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8\.%9";
+	mso-level-tab-stop:1.1in;
+	mso-level-number-position:left;
+	margin-left:1.1in;
+	text-indent:-1.1in;}
+@list l3
+	{mso-list-id:439880552;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1364656776 311603658 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"Bullets 2";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	margin-left:1.5in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l4
+	{mso-list-id:488790824;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1552129528 -801066970 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"Bullets 1";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:767888933;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1669694060 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:1149445977;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1370360754 67698689 67698703 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:1470320143;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1786099086 1291868356 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"Bullets 3";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	margin-left:2.0in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:1473477885;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1572958882 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l8:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l9
+	{mso-list-id:1689326582;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-513508770 672536948 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l9:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"ListBullets 3";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	margin-left:1.5in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l10
+	{mso-list-id:1718695810;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1258565914 1345218864 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"ListBullets 1";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l11
+	{mso-list-id:1922400254;
+	mso-list-type:hybrid;
+	mso-list-template-ids:397963048 -72190080 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l11:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"Indented Para 1";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.5in;
+	font-family:Symbol;}
+@list l12
+	{mso-list-id:2122335337;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1275987714 -765299110 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l12:level1
+	{mso-level-number-format:bullet;
+	mso-level-style-link:"ListBullets 2";
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	margin-left:1.0in;
+	text-indent:-.5in;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+</head>
+
+<body lang="EN-US" link="blue" vlink="purple" style="tab-interval:.5in">
+
+<div class="Section1">
+
+<p class="MsoNormal"><span lang="EN-GB">Author:<span style="mso-tab-count:2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Andrew
+Rose</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Date:<span style="mso-tab-count:2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>6<sup>th</sup>
+November 2003</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Status:<span style="mso-tab-count:2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Draft</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Title1"><span lang="EN-GB">The Diplomacy Centralisation Project
+Client-Server Protocol</span></p>
+
+<p class="Title1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Title1"><span lang="EN-GB">Version 1</span></p>
+
+<p class="Title1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Title1"><span lang="EN-GB">Revision 13</span></p>
+
+<p class="Title1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Title1"><span lang="EN-GB">DRAFT COPY</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<div style="border:none;border-top:solid windowtext 3.0pt;padding:1.0pt 0in 0in 0in">
+
+<h1><!--[if !supportLists]--><span lang="EN-GB">1<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Introduction</span></h1>
+
+</div>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This document specifies the protocol by
+which a Diplomacy AI (“client”) should communicate with the AIJudge
+(“server”).<span style="mso-spacerun: yes">&nbsp; </span>It should be read in
+conjunction with the <a href="http://www.daide.org.uk/external/dpp_syntax.html">AI Language Syntax</a>.<span style="mso-spacerun: yes">&nbsp; </span>The remainder of this document is structured
+as follows.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l6 level1 lfo21;tab-stops:list .5in"><span lang="EN-GB">Chapter 2 defines the transport mechanism.</span></li>
+ <li class="MsoNormal" style="mso-list:l6 level1 lfo21;tab-stops:list .5in"><span lang="EN-GB">Chapter 3 defines the message structures.</span></li>
+</ul>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">1.1<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Intended Audience</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The document is aimed at people who wish
+to…</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l0 level1 lfo24;tab-stops:list .5in"><span lang="EN-GB">Review the design of the protocol.</span></li>
+ <li class="MsoNormal" style="mso-list:l0 level1 lfo24;tab-stops:list .5in"><span lang="EN-GB">Implement an AIJudge.</span></li>
+ <li class="MsoNormal" style="mso-list:l0 level1 lfo24;tab-stops:list .5in"><span lang="EN-GB">Implement a client protocol wrapper.</span></li>
+ <li class="MsoNormal" style="mso-list:l0 level1 lfo24;tab-stops:list .5in"><span lang="EN-GB">Implement a Diplomacy AI where a client protocol wrapper is not
+     available.</span></li>
+</ul>
+
+<p class="MsoNormal" style="margin-left:.25in"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2 style="margin-left:.25in;text-indent:-.25in;mso-list:l0 level2 lfo24;
+tab-stops:list .25in"><!--[if !supportLists]--><span lang="EN-GB">1.2<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp; </span></span><!--[endif]--><span lang="EN-GB">Issues</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The following issues have been identified
+with this protocol and are under investigation.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l5 level1 lfo27;tab-stops:list .5in"><span lang="EN-GB">The language syntax is still undergoing modifications that are
+     likely to affect this document.</span></li>
+ <li class="MsoNormal" style="mso-list:l5 level1 lfo27;tab-stops:list .5in"><span lang="EN-GB">This document has not been signed off.</span></li>
+</ul>
+
+<p class="MsoNormal" style="margin-left:.25in"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal" style="margin-left:.25in"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal" style="margin-left:.25in"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<div style="border:none;border-top:solid windowtext 3.0pt;padding:1.0pt 0in 0in 0in">
+
+<h1><!--[if !supportLists]--><span lang="EN-GB">2<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Transport mechanism</span></h1>
+
+</div>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This section defines the transport
+mechanism to be used.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">2.1<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Basic Mechanism</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Client-server communications will be carried
+out over a TCP connection.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">2.2<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Server Requirements</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h3><span lang="EN-GB">Listening for Connections</span></h3>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">The server will publish an address and
+TCP port on which the server can be contacted.<span style="mso-spacerun: yes">&nbsp;
+</span>The method of publishing the address is outside the scope of this
+document.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">The server will open a listening
+connection on the published TCP port.<span style="mso-spacerun: yes">&nbsp;
+</span>It is recommended that a backlog of at least 10 connections be used
+where available to prevent unnecessary client connection failure.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">Following a connection from a client,
+the server will continue to listen for further connections from clients on the
+original socket.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<h3><span lang="EN-GB">Connections</span></h3>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">When a client connects to the server,
+the server will set the SO_KEEPALIVE socket option on the newly created
+socket.<span style="mso-spacerun: yes">&nbsp; </span>This causes dead connections to
+be cleared by the server.</span></p>
+
+<p class="IndentedPara1" style="margin-left:0in"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">The server will run a 30 second initial
+message timer.<span style="mso-spacerun: yes">&nbsp; </span>If the server hasn’t
+received any data when the timer pops, the server will send and error message
+(see below) and terminate the connection.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">If a client sends data over a connection
+with an invalid message structure (see chapter 3), the server will terminate
+the connection.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">2.3<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Client Requirements</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h3><span lang="EN-GB">Establishing a Connection</span></h3>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">To communicate with a server, a client
+shall first establish a TCP connection to the address and port published by the
+server.<span style="mso-spacerun: yes">&nbsp; </span>The client may use any free
+local port.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">The client will set the SO_KEEPALIVE
+socket option on the socket connected to the server.</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">Immediately following the establishment
+of a connection, the client shall send an Initial Message (see section 3.2).</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="IndentedPara1"><span lang="EN-GB">&nbsp;</span></p>
+
+<div style="border:none;border-top:solid windowtext 3.0pt;padding:1.0pt 0in 0in 0in">
+
+<h1><!--[if !supportLists]--><span lang="EN-GB">3<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Message Structures</span></h1>
+
+</div>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Once a connection has been established, the
+two parties may transfer messages as described in this section.<span style="mso-spacerun: yes">&nbsp; </span>Both parties may send messages at any time
+except as limited below.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">All message structures described in this
+section are shown in network byte order (big endian).<span style="mso-spacerun:
+yes">&nbsp; </span>Implementers of clients or servers for little endian machines
+(e.g. Intel) should take care in swapping the octets of multi-octet fields.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.1<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">General Message Structure</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">All messages sent between a client and a
+server will have the following message structure.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">0<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3<span style="mso-spacerun: yes">&nbsp;&nbsp; </span></span></p>
+
+<p class="Code"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span>0 1 2 3
+4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 </span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Optional Data<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type: 8 bits</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The type of message that follows.<span style="mso-spacerun: yes">&nbsp; </span>The messages and their type are described in
+the subsequent sections of this chapter.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Pad: 8 bits</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This part of the message is not valid.<span style="mso-spacerun: yes">&nbsp; </span>i.e. It may contain any bit pattern.<span style="mso-spacerun: yes">&nbsp; </span>It is included so that the length field is
+naturally aligned.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Remaining Length: 16 bits</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The number of octets in the message that
+follow the Remaining Length field.<span style="mso-spacerun: yes">&nbsp; </span>This
+may be zero if the message type alone completely defines the message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Optional Data:<span style="mso-spacerun:
+yes">&nbsp; </span>Variable length</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The data part of the message is described
+in the definitions for the individual messages.<span style="mso-spacerun:
+yes">&nbsp; </span>It is exactly the length specified in the Remaining Length field
+and is not padded.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.2<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">The Initial Message (IM)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This is a fixed length message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">0<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>2<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3<span style="mso-spacerun: yes">&nbsp;&nbsp; </span></span></p>
+
+<p class="Code"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span>0 1 2 3
+4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 </span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Version<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Magic<span style="mso-spacerun:
+yes">&nbsp; </span>Number<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type = 0</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Remaining Length = 4</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Version, as specified on the introductory page
+of this document.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Magic Number = 0xDA10</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This message is sent from the client to the
+server as soon as the connection has been opened.<span style="mso-spacerun:
+yes">&nbsp; </span>If the server discovers incompatible version numbers, it will
+send the error message and close the connection.<span style="mso-spacerun:
+yes">&nbsp; </span>Note that a single instance of a server may be able to talk
+several different protocol versions over different connections.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The message contains a magic number that is
+designed to quickly catch connections that have (inadvertently or deliberately)
+been made to the server by a program other than a Diplomacy AI Client.<span style="mso-spacerun: yes">&nbsp; </span>Because the magic number’s bit pattern is
+not the same forwards and backwards, it will also catch clients who have failed
+to send in network byte order.<span style="mso-spacerun: yes">&nbsp; </span>The
+message is only ever sent from the client to the server and it is only sent
+once.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.3<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">The Representation Message (RM)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Representation Message<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type = 1</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This mandatory message is sent from the
+server to the client immediately on receipt of the IM.<span style="mso-spacerun: yes">&nbsp; </span>It is used to define additional power and
+province tokens that will be valid for the variant of the game that the server
+is set up to adjudicate for.<span style="mso-spacerun: yes">&nbsp; </span>It will
+also give a text representation of any such tokens.<span style="mso-spacerun:
+yes">&nbsp; </span>If there are no such tokens, the remaining length will be zero.<span style="mso-spacerun: yes">&nbsp; </span>If there are additional tokens, the
+remaining length will be a multiple of six.<span style="mso-spacerun: yes">&nbsp;
+</span>Each six-octet block will consist of the following.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l8 level1 lfo30;tab-stops:list .5in"><span lang="EN-GB">A two-octet token.<span style="mso-spacerun: yes">&nbsp; </span>The
+     high octet must be in either the power category or one of the province
+     categories.<span style="mso-spacerun: yes">&nbsp; </span>See below for
+     limitations on the low octet.</span></li>
+</ul>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l8 level1 lfo30;tab-stops:list .5in"><span lang="EN-GB">A three-octet ASCII representation of the token using only A-Z
+     and 0-9.</span></li>
+</ul>
+
+<p class="MsoNormal" style="margin-left:.25in"><span lang="EN-GB">&nbsp;</span></p>
+
+<ul style="margin-top:0in" type="disc">
+ <li class="MsoNormal" style="mso-list:l8 level1 lfo30;tab-stops:list .5in"><span lang="EN-GB">An octet containing the value zero.</span></li>
+</ul>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">If the RM has non-zero length then none of
+the powers or provinces defined in chapter 4 are valid.<span style="mso-spacerun: yes">&nbsp; </span>Instead, the powers and provinces defined in
+the RM are the only valid powers and provinces.<span style="mso-spacerun:
+yes">&nbsp; </span>Note that if a variant uses the standard powers on a variant
+board or variant powers on the standard board, both the provinces and the
+powers must be defined in the RM.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The same token must not appear in the RM
+more than once.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">When defining provinces, the low-octet of
+the province tokens must be unique and form a sequence starting at 0 and
+incrementing by 1 up to the number of provinces less 1.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">When defining powers, the low-octet of the
+power tokens must be unique and form a sequence starting at 0 and incrementing
+by 1 up to the number of powers less 1.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This message is only ever sent from the
+server to the client and it is always sent precisely once, immediately
+following the IM.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.4<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">The Diplomacy Message (DM)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This is a variable length message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">0<span style="mso-spacerun: yes">&nbsp;&nbsp; </span><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>1<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3<span style="mso-spacerun: yes">&nbsp;&nbsp; </span></span></p>
+
+<p class="Code"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span>0 1 2 3
+4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 </span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="mso-spacerun: yes">&nbsp;</span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Language Message<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>.<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type = 2</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Remaining Length is at least 2.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The optional data part contains a single
+“language message” as described in the <a href="http://www.daide.org.uk/external/dpp_syntax.html">Language Syntax</a>.<span style="mso-spacerun: yes">&nbsp; </span>The language message is encoded as described
+in the chapter “Language Representation”.<span style="mso-spacerun: yes">&nbsp;
+</span>It can be sent by either party following the RM.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.5<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">The Final Message (FM)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This is a fixed length message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">0<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>3<span style="mso-spacerun: yes">&nbsp;&nbsp; </span></span></p>
+
+<p class="Code"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span>0 1 2 3
+4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 </span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type = 3</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Remaining Length = 0</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This message is sent immediately before the
+either party closes the TCP connection.<span style="mso-spacerun: yes">&nbsp;
+</span>It is not sent if an error message has been sent.<span style="mso-spacerun: yes">&nbsp; </span>On receipt, the receiving party will immediately
+close the connection without sending a final message or error message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">3.6<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">The Error Message (EM)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This is a fixed length message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">0<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>1<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>2<span style="mso-spacerun:
+yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3<span style="mso-spacerun: yes">&nbsp;&nbsp; </span></span></p>
+
+<p class="Code"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span>0 1 2 3
+4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 </span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;
+</span>Message Type |<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Pad<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Remaining Length<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="Code"><span lang="EN-GB">|<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Error code<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>|</span></p>
+
+<p class="Code"><span lang="EN-GB">+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Message Type = 4</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Remaining Length = 2</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This message indicates that the sending
+party has detected a protocol error.<span style="mso-spacerun: yes">&nbsp; </span>An
+EM may be sent at any time.<span style="mso-spacerun: yes">&nbsp; </span>The party
+sending this message will terminate the connection immediately after sending
+it.<span style="mso-spacerun: yes">&nbsp; </span>The error codes are defined in the
+following table.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;<o:p></o:p></span></p>
+
+<table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0in 5.4pt 0in 5.4pt">
+ <tbody><tr style="mso-yfti-irow:0">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Code</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Meaning</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Code</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border:solid windowtext .5pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Meaning</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:1">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x01</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">IM timer popped</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x02</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">IM was not the first message sent by the
+  client</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:2">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x03</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">IM indicated the wrong endian</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x04</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">IM had an incorrect magic number</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:3">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x05</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Version incompatibility</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x06</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">More than 1 IM sent</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:4">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x07</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">IM sent by server</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x08</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Unknown message received</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:5">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x09</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Message shorter than expected</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x0A</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">DM sent before RM</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:6">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x0B</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">RM was not the first message sent by the
+  server</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x0C</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">More than 1 RM sent</span></p>
+  </td>
+ </tr>
+ <tr style="mso-yfti-irow:7;mso-yfti-lastrow:yes">
+  <td width="55" valign="top" style="width:41.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x0D</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.8pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">RM sent by client</span></p>
+  </td>
+  <td width="56" valign="top" style="width:41.7pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">0x0E</span></p>
+  </td>
+  <td width="262" valign="top" style="width:196.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt">
+  <p class="MsoNormal"><span lang="EN-GB">Invalid token in DM</span></p>
+  </td>
+ </tr>
+</tbody></table>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Note that this message will not be sent due
+to a language error.<span style="mso-spacerun: yes">&nbsp; </span>Language errors
+are handled in the language itself (see Chapter 4).</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">On receipt of an error message, the
+receiving party will immediately close the connection without sending an error
+message or final message.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<div style="border:none;border-top:solid windowtext 3.0pt;padding:1.0pt 0in 0in 0in">
+
+<h1><!--[if !supportLists]--><span lang="EN-GB">4<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">LANGUAGE REPRESENTATION</span></h1>
+
+</div>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This section describes how a language message
+is encoded into the data part of a Diplomacy Message (see above).</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.1<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">General Coding Scheme</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Every language token will be represented by
+a 2-octet field.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The tokens are split into categories.<span style="mso-spacerun: yes">&nbsp; </span>Each category will have a 1-octet value
+associated with it.<span style="mso-spacerun: yes">&nbsp; </span>The tokens within
+each category will be numbered.<span style="mso-spacerun: yes">&nbsp; </span>The
+token value can be calculated by multiplying the category by 256 and adding the
+token number within the category.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">This method means that the protocol is
+extensible and allows simple determination of a token category from the top
+octet.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.2<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Category Space</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The category space is divided as follows.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">00xxxxxx ( 64) - Integers</span></p>
+
+<p class="Code"><span lang="EN-GB">0100xxxx ( 16) – Various individual categories</span></p>
+
+<p class="Code"><span lang="EN-GB">01010xxx (<span style="mso-spacerun: yes">&nbsp;
+</span>8) - Provinces</span></p>
+
+<p class="Code"><span lang="EN-GB">01011xxx (<span style="mso-spacerun: yes">&nbsp;
+</span>8) – Reserved for individual AI/Server use.<span style="mso-spacerun:
+yes">&nbsp; </span>Never transmitted.</span></p>
+
+<p class="Code"><span lang="EN-GB">011xxxxx ( 32) - Unassigned</span></p>
+
+<p class="Code"><span lang="EN-GB">1xxxxxxx (128) - Unassigned</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Of the 256 possible categories, 88 are
+assigned and the remaining 168 are reserved for future use.<span style="mso-spacerun: yes">&nbsp; </span>In those 168, a full 128-category block
+remains as well as a 32-category block.<span style="mso-spacerun: yes">&nbsp;
+</span>These blocks may be further subdivided in the future if appropriate.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The remainder of this chapter defines the
+categories, their value and the token numbers within the category.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB"><span style="mso-spacerun: yes">&nbsp;</span></span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.3<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Integers (0x00 – 0x3F)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The representable range of integers is -8192
+to +8191.<span style="yes"> <span style="mso-spacerun: yes">&nbsp;</span></span>They
+are coded as a 14-bit two’s-complement value.<span style="mso-spacerun: yes">&nbsp;
+</span>The top two bits of the category are always zero.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.4<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Miscellaneous (0x40)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">BRA 0x00<span style="mso-spacerun: yes">&nbsp;
+</span>- The open bracket ‘(’</span></p>
+
+<p class="Code"><span lang="EN-GB">KET 0x01<span style="mso-spacerun: yes">&nbsp;
+</span>- The close bracket ‘)’</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.5<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Powers (0x41)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">AUS 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">ENG 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">FRA 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">GER 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">ITA 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">RUS 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">TUR 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.6<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Unit Types (0x42)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">AMY 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">FLT 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.7<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Orders (0x43)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">CTO 0x20</span></p>
+
+<p class="Code"><span lang="EN-GB">CVY 0x21</span></p>
+
+<p class="Code"><span lang="EN-GB">HLD 0x22</span></p>
+
+<p class="Code"><span lang="EN-GB">MTO 0x23</span></p>
+
+<p class="Code"><span lang="EN-GB">SUP 0x24</span></p>
+
+<p class="Code"><span lang="EN-GB">VIA 0x25</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">DSB 0x40</span></p>
+
+<p class="Code"><span lang="EN-GB">RTO 0x41</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">BLD 0x80</span></p>
+
+<p class="Code"><span lang="EN-GB">REM 0x81</span></p>
+
+<p class="Code"><span lang="EN-GB">WVE 0x82</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Note that the high three bits can be used to
+determine which phase the order is valid in.<span style="mso-spacerun: yes">&nbsp;
+</span>The top bit is valid the adjustments phase, the next is valid in the
+retreats phase and the last is valid in the movement phase.</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.8<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Order Notes (0x44)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">MBV 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">BPR 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">CST 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">ESC 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">FAR 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">HSC 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">NAS 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">NMB 0x07</span></p>
+
+<p class="Code"><span lang="EN-GB">NMR 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">NRN 0x09</span></p>
+
+<p class="Code"><span lang="EN-GB">NRS 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">NSA 0x0B</span></p>
+
+<p class="Code"><span lang="EN-GB">NSC 0x0C</span></p>
+
+<p class="Code"><span lang="EN-GB">NSF 0x0D</span></p>
+
+<p class="Code"><span lang="EN-GB">NSP 0x0E</span></p>
+
+<p class="Code"><span lang="EN-GB">NST 0x0F</span></p>
+
+<p class="Code"><span lang="EN-GB">NSU 0x10</span></p>
+
+<p class="Code"><span lang="EN-GB">NVR 0x11</span></p>
+
+<p class="Code"><span lang="EN-GB">NYU 0x12</span></p>
+
+<p class="Code"><span lang="EN-GB">YSC 0x13</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.9<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Results (0x45)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">SUC 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">BNC 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">CUT 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">DSR 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">FLD 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">NSO 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">RET 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.10<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Coasts (0x46)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">NCS 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">NEC 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">ECS 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">SEC 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">SCS 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">SWC 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">WCS 0x0C</span></p>
+
+<p class="Code"><span lang="EN-GB">NWC 0x0E</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.11<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Phases (0x47)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">SPR 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">SUM 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">FAL 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">AUT 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">WIN 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.12<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Commands (0x48)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">CCD 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">DRW 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">FRM 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">GOF 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">HLO 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">HST 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">HUH 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">IAM 0x07</span></p>
+
+<p class="Code"><span lang="EN-GB">LOD 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">MAP 0x09</span></p>
+
+<p class="Code"><span lang="EN-GB">MDF 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">MIS 0x0B</span></p>
+
+<p class="Code"><span lang="EN-GB">NME 0x0C</span></p>
+
+<p class="Code"><span lang="EN-GB">NOT 0x0D</span></p>
+
+<p class="Code"><span lang="EN-GB">NOW 0x0E</span></p>
+
+<p class="Code"><span lang="EN-GB">OBS 0x0F</span></p>
+
+<p class="Code"><span lang="EN-GB">OFF 0x10</span></p>
+
+<p class="Code"><span lang="EN-GB">ORD 0x11</span></p>
+
+<p class="Code"><span lang="EN-GB">OUT 0x12</span></p>
+
+<p class="Code"><span lang="EN-GB">PRN 0x13</span></p>
+
+<p class="Code"><span lang="EN-GB">REJ 0x14</span></p>
+
+<p class="Code"><span lang="EN-GB">SCO 0x15</span></p>
+
+<p class="Code"><span lang="EN-GB">SLO 0x16</span></p>
+
+<p class="Code"><span lang="EN-GB">SND 0x17</span></p>
+
+<p class="Code"><span lang="EN-GB">SUB 0x18</span></p>
+
+<p class="Code"><span lang="EN-GB">SVE 0x19</span></p>
+
+<p class="Code"><span lang="EN-GB">THX 0x1A</span></p>
+
+<p class="Code"><span lang="EN-GB">TME 0x1B</span></p>
+
+<p class="Code"><span lang="EN-GB">YES 0x1C</span></p>
+
+<p class="Code"><span lang="EN-GB">ADM 0x1D</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.13<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Parameters (0x49)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">AOA 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">BTL 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">ERR 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">LVL 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">MRT 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">MTL 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">NPB 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">NPR 0x07</span></p>
+
+<p class="Code"><span lang="EN-GB">PDA 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">PTL 0x09</span></p>
+
+<p class="Code"><span lang="EN-GB">RTL 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">UNO 0x0B</span></p>
+
+<p class="Code"><span lang="EN-GB">DSD 0x0D</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.14<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Press (0x4A)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">ALY 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">AND 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">BWX 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">DMZ 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">ELS 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">EXP 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">FWD 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">FCT 0x07</span></p>
+
+<p class="Code"><span lang="EN-GB">FOR 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">HOW 0x09</span></p>
+
+<p class="Code"><span lang="EN-GB">IDK 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">IFF 0x0B</span></p>
+
+<p class="Code"><span lang="EN-GB">INS 0x0C</span></p>
+
+<p class="Code"><span lang="EN-GB">IOU 0x0D</span></p>
+
+<p class="Code"><span lang="EN-GB">OCC 0x0E</span></p>
+
+<p class="Code"><span lang="EN-GB">ORR 0x0F</span></p>
+
+<p class="Code"><span lang="EN-GB">PCE 0x10</span></p>
+
+<p class="Code"><span lang="EN-GB">POB 0x11</span></p>
+
+<p class="Code"><span lang="EN-GB">PPT 0x12</span></p>
+
+<p class="Code"><span lang="EN-GB">PRP 0x13</span></p>
+
+<p class="Code"><span lang="EN-GB">QRY 0x14</span></p>
+
+<p class="Code"><span lang="EN-GB">SCD 0x15</span></p>
+
+<p class="Code"><span lang="EN-GB">SRY 0x16</span></p>
+
+<p class="Code"><span lang="EN-GB">SUG 0x17</span></p>
+
+<p class="Code"><span lang="EN-GB">THK 0x18</span></p>
+
+<p class="Code"><span lang="EN-GB">THN 0x19</span></p>
+
+<p class="Code"><span lang="EN-GB">TRY 0x1A</span></p>
+
+<p class="Code"><span lang="EN-GB">UOM 0x1B</span></p>
+
+<p class="Code"><span lang="EN-GB">VSS 0x1C</span></p>
+
+<p class="Code"><span lang="EN-GB">WHT 0x1D</span></p>
+
+<p class="Code"><span lang="EN-GB">WHY 0x1E</span></p>
+
+<p class="Code"><span lang="EN-GB">XDO 0x1F</span></p>
+
+<p class="Code"><span lang="EN-GB">XOY 0x20</span></p>
+
+<p class="Code"><span lang="EN-GB">YDO 0x21</span></p>
+
+<p class="Code"><span lang="EN-GB">WRT 0x22</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.15<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Text (0x4B)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">The value is the ASCII code for a single
+letter.<span style="mso-spacerun: yes">&nbsp; </span>Strings are not delimited with
+quotation marks or anything else.<span style="mso-spacerun: yes">&nbsp; </span>There
+are no situations in the language where one string runs directly into
+another.<span style="mso-spacerun: yes">&nbsp; </span>Therefore, the end of a string
+can be identified when the first non-text token is received.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.16<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Provinces (0x50 – 0x57)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">There are eight province categories as
+defined here.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Inland non-SC category = 0x50<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">BOH 0x00</span></p>
+
+<p class="Code"><span lang="EN-GB">BUR 0x01</span></p>
+
+<p class="Code"><span lang="EN-GB">GAL 0x02</span></p>
+
+<p class="Code"><span lang="EN-GB">RUH 0x03</span></p>
+
+<p class="Code"><span lang="EN-GB">SIL 0x04</span></p>
+
+<p class="Code"><span lang="EN-GB">TYR 0x05</span></p>
+
+<p class="Code"><span lang="EN-GB">UKR 0x06</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Inland SC category = 0x51<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">BUD 0x07</span></p>
+
+<p class="Code"><span lang="EN-GB">MOS 0x08</span></p>
+
+<p class="Code"><span lang="EN-GB">MUN 0x09</span></p>
+
+<p class="Code"><span lang="EN-GB">PAR 0x0A</span></p>
+
+<p class="Code"><span lang="EN-GB">SER 0x0B</span></p>
+
+<p class="Code"><span lang="EN-GB">VIE 0x0C</span></p>
+
+<p class="Code"><span lang="EN-GB">WAR 0x0D</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Sea non-SC category = 0x52<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">ADR 0x0E</span></p>
+
+<p class="Code"><span lang="EN-GB">AEG 0x0F</span></p>
+
+<p class="Code"><span lang="EN-GB">BAL 0x10</span></p>
+
+<p class="Code"><span lang="EN-GB">BAR 0x11</span></p>
+
+<p class="Code"><span lang="EN-GB">BLA 0x12</span></p>
+
+<p class="Code"><span lang="EN-GB">EAS 0x13</span></p>
+
+<p class="Code"><span lang="EN-GB">ECH 0x14</span></p>
+
+<p class="Code"><span lang="EN-GB">GOB 0x15</span></p>
+
+<p class="Code"><span lang="EN-GB">GOL 0x16</span></p>
+
+<p class="Code"><span lang="EN-GB">HEL 0x17</span></p>
+
+<p class="Code"><span lang="EN-GB">ION 0x18</span></p>
+
+<p class="Code"><span lang="EN-GB">IRI 0x19</span></p>
+
+<p class="Code"><span lang="EN-GB">MAO 0x1A</span></p>
+
+<p class="Code"><span lang="EN-GB">NAO 0x1B</span></p>
+
+<p class="Code"><span lang="EN-GB">NTH 0x1C</span></p>
+
+<p class="Code"><span lang="EN-GB">NWG 0x1D</span></p>
+
+<p class="Code"><span lang="EN-GB">SKA 0x1E</span></p>
+
+<p class="Code"><span lang="EN-GB">TYS 0x1F</span></p>
+
+<p class="Code"><span lang="EN-GB">WES 0x20</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Sea SC category = 0x53<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">On the standard map there are no sea SCs.</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Coastal non-SC category = 0x54<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">ALB 0x21</span></p>
+
+<p class="Code"><span lang="EN-GB">APU 0x22</span></p>
+
+<p class="Code"><span lang="EN-GB">ARM 0x23</span></p>
+
+<p class="Code"><span lang="EN-GB">CLY 0x24</span></p>
+
+<p class="Code"><span lang="EN-GB">FIN 0x25</span></p>
+
+<p class="Code"><span lang="EN-GB">GAS 0x26</span></p>
+
+<p class="Code"><span lang="EN-GB">LVN 0x27</span></p>
+
+<p class="Code"><span lang="EN-GB">NAF 0x28</span></p>
+
+<p class="Code"><span lang="EN-GB">PIC 0x29</span></p>
+
+<p class="Code"><span lang="EN-GB">PIE 0x2A</span></p>
+
+<p class="Code"><span lang="EN-GB">PRU 0x2B</span></p>
+
+<p class="Code"><span lang="EN-GB">SYR 0x2C</span></p>
+
+<p class="Code"><span lang="EN-GB">TUS 0x2D</span></p>
+
+<p class="Code"><span lang="EN-GB">WAL 0x2E</span></p>
+
+<p class="Code"><span lang="EN-GB">YOR 0x2F</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Coastal SC category = 0x55<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">ANK 0x30</span></p>
+
+<p class="Code"><span lang="EN-GB">BEL 0x31</span></p>
+
+<p class="Code"><span lang="EN-GB">BER 0x32</span></p>
+
+<p class="Code"><span lang="EN-GB">BRE 0x33</span></p>
+
+<p class="Code"><span lang="EN-GB">CON 0x34</span></p>
+
+<p class="Code"><span lang="EN-GB">DEN 0x35</span></p>
+
+<p class="Code"><span lang="EN-GB">EDI 0x36</span></p>
+
+<p class="Code"><span lang="EN-GB">GRE 0x37</span></p>
+
+<p class="Code"><span lang="EN-GB">HOL 0x38</span></p>
+
+<p class="Code"><span lang="EN-GB">KIE 0x39</span></p>
+
+<p class="Code"><span lang="EN-GB">LON 0x3A</span></p>
+
+<p class="Code"><span lang="EN-GB">LVP 0x3B</span></p>
+
+<p class="Code"><span lang="EN-GB">MAR 0x3C</span></p>
+
+<p class="Code"><span lang="EN-GB">NAP 0x3D</span></p>
+
+<p class="Code"><span lang="EN-GB">NWY 0x3E</span></p>
+
+<p class="Code"><span lang="EN-GB">POR 0x3F</span></p>
+
+<p class="Code"><span lang="EN-GB">ROM 0x40</span></p>
+
+<p class="Code"><span lang="EN-GB">RUM 0x41</span></p>
+
+<p class="Code"><span lang="EN-GB">SEV 0x42</span></p>
+
+<p class="Code"><span lang="EN-GB">SMY 0x43</span></p>
+
+<p class="Code"><span lang="EN-GB">SWE 0x44</span></p>
+
+<p class="Code"><span lang="EN-GB">TRI 0x45</span></p>
+
+<p class="Code"><span lang="EN-GB">TUN 0x46</span></p>
+
+<p class="Code"><span lang="EN-GB">VEN 0x47</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Bicoastal non-SC category = 0x56<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">On the standard map there are no non-SC
+bicoastal provinces.</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><b><span lang="EN-GB">Bicoastal SC category = 0x57<o:p></o:p></span></b></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="Code"><span lang="EN-GB">BUL 0x48</span></p>
+
+<p class="Code"><span lang="EN-GB">SPA 0x49</span></p>
+
+<p class="Code"><span lang="EN-GB">STP 0x4A</span></p>
+
+<p class="Code"><span lang="EN-GB">&nbsp;</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">Note that the province values form a
+sequence starting at zero and leading up to 74 (giving 75 provinces in
+total).<span style="mso-spacerun: yes">&nbsp; </span>It will always be possible to
+use the bottom octet to index into a zero-based array.<span style="mso-spacerun: yes">&nbsp; </span>The low bit of the category determines if
+the province is a supply centre or not.<span style="mso-spacerun: yes">&nbsp;
+</span>The next two bits can be used to determine province type.</span></p>
+
+<p class="MsoNormal"><span lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+
+<h2><!--[if !supportLists]--><span lang="EN-GB">4.17<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]--><span lang="EN-GB">Reserved for AI use (0x58 – 0x5F)</span></h2>
+
+<p class="MsoNormal"><span lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+
+<p class="MsoNormal"><span lang="EN-GB">These categories will never be assigned
+another use.<span style="mso-spacerun: yes">&nbsp; </span>AI writers are free to use
+these categories as they see fit.<span style="mso-spacerun: yes">&nbsp;
+</span>However, they must never be sent over the wire.</span></p>
+
+</div>
+
+
+
+
+</body></html>

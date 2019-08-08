@@ -27,8 +27,6 @@ class HoldBot(BaseClient):
 
         # Retreat phase
         elif self.map.season in [SUM, AUT]:
-            # TODO
-            print(self.map.get_dislodged())
             for unit, opts in self.map.get_dislodged():
                 # No retreat options; disband unit.
                 if opts == []:
@@ -41,8 +39,6 @@ class HoldBot(BaseClient):
         # Adjustment phase
         else:
             build_num = self.map.build_number()
-            # TODO
-            print("%s: %s" % (self.power, build_num))
             # More units than sc's; need to remove some units
             if build_num < 0:
                 unordered = self.map.get_unordered()

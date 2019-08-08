@@ -189,10 +189,6 @@ class Gameboard():
         '''
         sc = len(self.get_supply_centers(self.power_played))
         units = len(self.get_own_units())
-        print("%s" % self.power_played)
-        print(self.get_supply_centers(self.power_played))
-        print("SC: %s" % sc)
-        print("UNITS: %s" % units)
         return sc - units
 
     def missing_orders(self):
@@ -471,9 +467,3 @@ class WaiveOrder():
 
     def message(self):
         return (self.power + WVE).wrap()
-
-
-if __name__ == '__main__':
-    unit = Unit(RUS, FLT, [STP, SCS])
-    h = HoldOrder(unit)
-    print(h)

@@ -20,7 +20,7 @@ DAIDE Server. Currently it is very much a work in progress.
 ## Getting started
 You'll need Python 3 to run things. You'll also need the DAIDE Server, and
 I recommend downloading David Norman's DAIDE Mapper as well, which
-makes things a lot easier (and more fun). These can be found on his
+makes things a lot easier (and more fun). These can be found
 [here](http://www.ellought.demon.co.uk/dipai/).
 
 Note that I use [Wine](https://www.winehq.org/) to run the DAIDE Server

@@ -42,7 +42,7 @@ class Token():
         return self._hex
 
     def __repr__(self):
-        cat = self.get_category()
+        cat = self.category()
         if cat == 'TEXT':
             return 'Token(%s, %s)' % (self._hex, '\'' + self.tla + '\'')
         else:
@@ -56,15 +56,23 @@ class Token():
         else:
             return str(self.tla)
 
-    def get_category(self):
+    def category(self):
         cat_byte = self._hex >> 8
         if (0x00 <= cat_byte <= 0x3F):
-            category = 'INTEGER'
+            return 'INTEGER'
         elif (0x50 <= cat_byte <= 0x57):
-            category = 'PROVINCE'
-        else:
-            category = init.categories[cat_byte]
-        return category
+            return 'PROVINCE'
+        return init.categories[cat_byte]
+
+    def province_category(self):
+        cat_byte = self._hex >> 8
+        if self.category == 'PROVINCE':
+            return init.province_categories[cat_byte]
+        return None
+
+    def is_coastal(self):
+        cat_byte = self._hex >> 8
+        return cat_byte in [0x54, 0x55, 0x56, 0x57]
 
 
 class Message(list):
@@ -187,13 +195,13 @@ class Message(list):
         for token in lst:
             if not isinstance(token, Token):
                 result.append(token)
-            elif (token.get_category() == 'TEXT'):
+            elif (token.category() == 'TEXT'):
                 text += token.tla
             else:
                 if (text != ''):
                     result.append(text)
                     text = ''
-                if (token.get_category() == 'INTEGER'):
+                if (token.category() == 'INTEGER'):
                     result.append(token._hex)
                 else:
                     result.append(token)
@@ -210,7 +218,7 @@ class Message(list):
         result = ''
         in_text = False
         for token in self:
-            if token.get_category() == 'TEXT':
+            if token.category() == 'TEXT':
                 in_text = True
                 result += token.tla
             else:
@@ -229,7 +237,7 @@ class Message(list):
         string_msg = '\''
 
         for token in self:
-            if (token.get_category() == 'TEXT'):
+            if (token.category() == 'TEXT'):
                 string_msg += token.tla
             else:
                 if (string_msg != '\''):

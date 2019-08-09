@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-import signal
-import sys
-
 from BaseClient import BaseClient
 from language import *
 from gameboard import *

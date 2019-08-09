@@ -167,6 +167,17 @@ class Gameboard():
     def get_supply_centers(self, power):
         return self.supply_centers[power]
 
+    def get_adjacencies(self, province, unit_type=None):
+        '''
+        Returns a list of adjacent provinces to 'province'.
+        TODO: should we include more arguments specifying whether to
+        return only inland/coastal/sea provinces?
+        '''
+        if prov_type:
+            return self.adjacencies[province][unit_type]
+        else:
+            raise NotImplementedError
+
     def get_orders(self):
         '''
         Returns a Message corresponding to a list of orders in DAIDE format,
@@ -244,6 +255,19 @@ class Gameboard():
             if not self.is_ordered(unit):
                 unordered.append(unit)
         return unordered
+
+    def open_home_centers(self):
+        '''
+        Returns list of open home supply centers.
+        '''
+        home = self.home_centers[self.power_played]
+        # home centers that are still owned by power
+        owned_home = [p for p in home if p in self.supply_centers[self.power_played]]
+        # remove centers that a Unit is occupying
+        for unit in self.get_own_units():
+            if unit.province in owned_home:
+                owned_home.remove(unit.province)
+        return owned_home
 
 
 class Unit():

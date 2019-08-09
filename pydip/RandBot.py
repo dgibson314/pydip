@@ -30,6 +30,8 @@ class RandBot(BaseClient):
                     self.map.add(order(unit, destination))
                 else:
                     self.map.add(order(unit))
+
+        # Retreat phase
         elif season in [SUM, AUT]:
             for unit, opts in self.map.get_dislodged():
                 # No retreat options; disband unit.
@@ -50,4 +52,31 @@ class RandBot(BaseClient):
                 for i in range(abs(build_num)):
                     self.map.add(RemoveOrder(shuffled[i]))
             elif build_num > 0:
-                pass
+                home = self.map.open_home_centers()
+                home = random.shuffle(home)
+                max_build = min(build_num, len(home))
+                delta = buid_num - max_build
+
+                for i in range(max_build):
+                    # TODO: choosing coast for bicoastal provs
+                    province = home[i]
+                    if province.is_coastal():
+                        unit_type = random.choice([AMY, FLT])
+                    else:
+                        unit_type = AMY
+                    unit = Unit(self.power, unit_type, province)
+                    self.map.add(BuildOrder(unit))
+
+                if delta > 0:
+                    for i in range(delta):
+                        self.map.add(WaiveOrder(self.power))
+
+
+if __name__ == '__main__':
+    bot = RandBot()
+    bot.register()
+    while True:
+        msg = bot.recv_msg()
+        if msg:
+            bot.print_incoming_message(msg)
+            bot.handle_incoming_message(msg)

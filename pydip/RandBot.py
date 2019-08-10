@@ -23,9 +23,9 @@ class RandBot(BaseClient):
         # Movement phase
         if season in [SPR, FAL]:
             for unit in units: 
-                order = random.choice(movement_phase_orders)
+                order = random.choice(self.movement_phase_orders)
                 if order == MoveOrder:
-                    adj_provs = self.map.get_adjacencies[unit.province][unit.unit_type]
+                    adj_provs = self.map.get_adjacencies(unit.province, unit.unit_type)
                     destination = random.choice(adj_provs)
                     self.map.add(order(unit, destination))
                 else:
@@ -48,9 +48,9 @@ class RandBot(BaseClient):
             build_num = self.map.build_number()
             # Select random unit to remove
             if build_num < 0:
-                shuffled = random.shuffle(units)
+                random.shuffle(units)
                 for i in range(abs(build_num)):
-                    self.map.add(RemoveOrder(shuffled[i]))
+                    self.map.add(RemoveOrder(units[i]))
             elif build_num > 0:
                 home = self.map.open_home_centers()
                 home = random.shuffle(home)

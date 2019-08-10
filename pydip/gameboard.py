@@ -173,10 +173,11 @@ class Gameboard():
         TODO: should we include more arguments specifying whether to
         return only inland/coastal/sea provinces?
         '''
-        if prov_type:
-            return self.adjacencies[province][unit_type]
-        else:
-            raise NotImplementedError
+        try:
+            if unit_type:
+                return self.adjacencies[province][unit_type]
+        except KeyError:
+            print(province, unit_type)
 
     def get_orders(self):
         '''

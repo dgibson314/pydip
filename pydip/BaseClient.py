@@ -3,7 +3,7 @@ import struct
 import socket
 import threading
 
-import init
+import util
 from language import *
 from gameboard import Gameboard
 
@@ -129,11 +129,11 @@ class BaseClient():
     def handle_incoming_message(self, msg):
         msg_type, msg_len, message = msg
 
-        if (msg_type == init.RM):
+        if (msg_type == util.RM):
             self.handle_representation_message(message)
-        elif (msg_type == init.DM):
+        elif (msg_type == util.DM):
             self.handle_diplomacy_message(message)
-        elif (msg_type == init.EM):
+        elif (msg_type == util.EM):
             self.handle_error_message(message)
 
     def print_incoming_message(self, msg):

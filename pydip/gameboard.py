@@ -414,6 +414,12 @@ class SupportMoveOrder():
 
 
 class ConvoyOrder():
+    '''
+    The destination province doesn't need a coast specified, since the army
+    being convoyed doesn't care about coasts, and the sea provinces also
+    don't have coasts specified, e.g. a fleet capable of convoying must not
+    be in a coastal province.
+    '''
     def __init__(self, unit, cvy_unit, destination):
         BaseOrder.__init__(self)
         self.unit = unit
@@ -422,10 +428,13 @@ class ConvoyOrder():
         self.key = (unit.key, CVY, cvy_unit.key, CTO, destination)
 
     def __repr__(self):
-        return "ConvoyOrder(%s, %s)" % (repr(self.unit), repr(self.cvy_unit), self.dest)
+        return "ConvoyOrder(%s, %s, %s)" % (repr(self.unit), repr(self.cvy_unit), self.dest)
 
     def __str__(self):
         return "Convoy(%s ^ %s -> %s)" % (self.unit, self.cvy_unit, self.dest)
+
+    def message(self):
+        return (self.unit.wrap() ++ CVY + self.cvy_unit.wrap() ++ CTO ++ self.dest).wrap()
 
 
 class MoveByConvoyOrder():
@@ -527,6 +536,7 @@ class WaiveOrder():
 
 
 if __name__ == "__main__":
-    unit = Unit(ENG, FLT, (BUL, SCS))
-    m = RetreatOrder(unit, (BUL, NCS))
+    unit = Unit(ENG, FLT, ECH)
+    c_unit = Unit(ENG, AMY, LON)
+    m = ConvoyOrder(unit, c_unit, BRE)
     print(m.message())

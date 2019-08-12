@@ -383,6 +383,19 @@ class SupportHoldOrder():
 
 
 class SupportMoveOrder():
+    '''
+    Support-to-move orders take a destination province without a coast
+    specification.
+    See the DAIDE Syntax document section (iii).
+
+    >>> unit = Unit(ENG, FLT, NWY)
+    >>> sup_unit = Unit(ENG, FLT, BAR)
+    >>> h = SupportMoveOrder(unit, sup_unit, STP)
+    >>> print(h)
+    SupportMove(ENG FLT NWY | ENG FLT BAR -> STP)
+    >>> print(h.message())
+    ( ( ENG FLT NWY ) SUP ( ENG FLT BAR ) MTO STP ) 
+    '''
     def __init__(self, unit, supported, destination):
         BaseOrder.__init__(self)
         self.unit = unit
@@ -395,6 +408,9 @@ class SupportMoveOrder():
 
     def __str__(self):
         return "SupportMove(%s | %s -> %s)" % (self.unit, self.supported, self.dest)
+
+    def message(self):
+        return (self.unit.wrap() ++ SUP + self.supported.wrap() ++ MTO ++ self.dest).wrap()
 
 
 class ConvoyOrder():
@@ -426,17 +442,24 @@ class RetreatOrder():
     def __init__(self, unit, destination):
         BaseOrder.__init__(self)
         self.unit = unit
-        self.dest = destination
+        self.dest, self.dest_coast = unpack_province(destination)
         self.key = (unit.key, RTO, destination)
 
     def __repr__(self):
-        return "RetreatOrder(%s, %s)" % (repr(self.unit), self.dest)
+        return "RetreatOrder(%s, (%s, %s))" % (repr(self.unit), self.dest, self.dest_coast)
 
     def __str__(self):
-        return "Retreat(%s -> %s)" % (self.unit, self.dest)
+        if self.dest_coast:
+            return "Retreat(%s -> ( %s %s ))" % (self.unit, self.dest, self.dest_coast)
+        else:
+            return "Retreat(%s -> %s)" % (self.unit, self.dest)
 
     def message(self):
-        return (self.unit.wrap() ++ RTO ++ self.dest).wrap()
+        if self.dest_coast:
+            destination = Message(self.dest, self.dest_coast).wrap()
+            return (self.unit.wrap() ++ RTO + destination).wrap()
+        else:
+            return (self.unit.wrap() ++ RTO ++ self.dest).wrap()
 
 
 class DisbandOrder():
@@ -505,6 +528,5 @@ class WaiveOrder():
 
 if __name__ == "__main__":
     unit = Unit(ENG, FLT, (BUL, SCS))
-    destination = (BUL, NCS)
-    m = MoveOrder(unit, destination)
+    m = RetreatOrder(unit, (BUL, NCS))
     print(m.message())

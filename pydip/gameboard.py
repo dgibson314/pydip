@@ -271,16 +271,18 @@ class Gameboard():
         return owned_home
 
 
+def unpack_province(province):
+    if isinstance(province, list) or isinstance(province, tuple):
+        return (province[0], province[1])
+    else:
+        return (province, None)
+
+
 class Unit():
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
-        if isinstance(province, list) or isinstance(province, tuple):
-            self.province = province[0]
-            self.coast = province[1]
-        else:
-            self.province = province
-            self.coast = None
+        self.province, self.coast = unpack_province(province)
         if self.coast:
             self.key = (self.power, self.unit_type, (self.province, self.coast))
         else:
@@ -343,17 +345,24 @@ class MoveOrder():
     def __init__(self, unit, destination):
         BaseOrder.__init__(self)
         self.unit = unit
-        self.dest = destination
+        self.dest, self.dest_coast = unpack_province(destination)
         self.key = (unit.key, MTO, destination)
 
     def __repr__(self):
-        return "MoveOrder(%s, %s)" % (repr(self.unit), self.dest)
+        return "MoveOrder(%s, (%s, %s))" % (repr(self.unit), self.dest, self.dest_coast)
 
     def __str__(self):
-        return "Move(%s -> %s)" % (self.unit, self.dest)
+        if self.dest_coast:
+            return "Move(%s -> ( %s %s ))" % (self.unit, self.dest, self.dest_coast)
+        else:
+            return "Move(%s -> %s)" % (self.unit, self.dest)
 
     def message(self):
-        return (self.unit.wrap() ++ MTO ++ self.dest).wrap()
+        if self.dest_coast:
+            destination = Message(self.dest, self.dest_coast).wrap()
+            return (self.unit.wrap() ++ MTO + destination).wrap()
+        else:
+            return (self.unit.wrap() ++ MTO ++ self.dest).wrap()
 
 
 class SupportHoldOrder():
@@ -492,3 +501,10 @@ class WaiveOrder():
 
     def message(self):
         return (self.power + WVE).wrap()
+
+
+if __name__ == "__main__":
+    unit = Unit(ENG, FLT, (BUL, SCS))
+    destination = (BUL, NCS)
+    m = MoveOrder(unit, destination)
+    print(m.message())

@@ -1,6 +1,5 @@
 import struct
 
-import init
 import util
 
 
@@ -62,12 +61,12 @@ class Token():
             return 'INTEGER'
         elif (0x50 <= cat_byte <= 0x57):
             return 'PROVINCE'
-        return init.categories[cat_byte]
+        return util.categories[cat_byte]
 
     def province_category(self):
         cat_byte = self._hex >> 8
         if self.category == 'PROVINCE':
-            return init.province_categories[cat_byte]
+            return util.province_categories[cat_byte]
         return None
 
     def is_coastal(self):
@@ -114,7 +113,7 @@ class Message(list):
             elif 0x50 <= cat_byte <= 0x57:
                 cat = 'PROVINCE'
             else:
-                cat = init.categories[byte >> 8]
+                cat = util.categories[byte >> 8]
             token = None
             if (cat == 'INTEGER'):
                 token = (Token.integer(byte))

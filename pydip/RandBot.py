@@ -7,7 +7,7 @@ from gameboard import *
 
 class RandBot(BaseClient):
     '''
-    The next step up from the HoldBot. 
+    The next step up from the HoldBot.
     '''
     movement_phase_orders = [HoldOrder, MoveOrder]
 
@@ -22,10 +22,10 @@ class RandBot(BaseClient):
 
         # Movement phase
         if season in [SPR, FAL]:
-            for unit in units: 
+            for unit in units:
                 order = random.choice(self.movement_phase_orders)
                 if order == MoveOrder:
-                    adj_provs = self.map.get_adjacencies(unit.province, unit.unit_type)
+                    adj_provs = self.map.get_adjacencies(unit)
                     destination = random.choice(adj_provs)
                     self.map.add(order(unit, destination))
                 else:
@@ -53,18 +53,21 @@ class RandBot(BaseClient):
                     self.map.add(RemoveOrder(units[i]))
             elif build_num > 0:
                 home = self.map.open_home_centers()
-                home = random.shuffle(home)
+                random.shuffle(home)
                 max_build = min(build_num, len(home))
-                delta = buid_num - max_build
+                delta = build_num - max_build
 
                 for i in range(max_build):
                     # TODO: choosing coast for bicoastal provs
                     province = home[i]
+                    coast = None
                     if province.is_coastal():
                         unit_type = random.choice([AMY, FLT])
+                        if unit_type == FLT and province.is_bicoastal():
+                            coast = random.choice(self.map.coasts[province])
                     else:
                         unit_type = AMY
-                    unit = Unit(self.power, unit_type, province)
+                    unit = Unit(self.power, unit_type, (province, coast))
                     self.map.add(BuildOrder(unit))
 
                 if delta > 0:

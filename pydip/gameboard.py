@@ -14,6 +14,8 @@ class Gameboard():
                         [province [unit_type adj_prov adj_prov...]...]...].
                         See the DAIDE Message Syntax section on the MDF message
                         for more details.
+    - coasts            Dictionary of coastal provinces mapped to their
+                        coast options.
 
     The following instance variables are updated as the game progresses,
     (probably) by being passed NOW and SCO messages from the DAIDE server.
@@ -46,6 +48,7 @@ class Gameboard():
         self.powers = []
         self.home_centers = {}
         self.adjacencies = {}
+        self.coasts = {}
 
         self.supply_centers = {}
         self.units = {}
@@ -78,11 +81,26 @@ class Gameboard():
             self.adjacencies[province] = {}
             adjs = prov_adj[1:]
             for adj in adjs:
-                unit_type = tuple(adj[0]) if isinstance(adj[0], list) else adj[0]
+                self.coasts[province] = []
+
+                # adj[0] is one of
+                #   - AMY
+                #   - FLT
+                #   - [FLT, coast]
+                if isinstance(adj[0], list):
+                    unit_type = tuple(adj[0])
+                    self.coasts[province].append(unit_type[1])
+                else:
+                    unit_type = adj[0]
+
                 # [province, [province, coast]] -> [province, (province, coast)]
                 adj_provs = [tuple(p) if isinstance(p, list) else p
                              for p in adj[1:]]
+
                 self.adjacencies[province][unit_type] = adj_provs
+
+        # Clear out empty coast lists
+        self.coasts = {k: v for k, v in self.coasts.items() if v != []}
 
     def current_turn(self):
         '''
@@ -167,17 +185,27 @@ class Gameboard():
     def get_supply_centers(self, power):
         return self.supply_centers[power]
 
+    def get_adjacencies(self, unit):
+        '''
+        Returns a list of provinces able to be moved to
+        by a Unit.
+        '''
+        unit_type = unit.unit_type
+        province = unit.province
+        coast = unit.coast
+        if coast:
+            return self.adjacencies[province][(unit_type, coast)]
+        else:
+            return self.adjacencies[province][unit_type]
+
+    '''
     def get_adjacencies(self, province, unit_type=None):
-        '''
-        Returns a list of adjacent provinces to 'province'.
-        TODO: should we include more arguments specifying whether to
-        return only inland/coastal/sea provinces?
-        '''
         try:
             if unit_type:
                 return self.adjacencies[province][unit_type]
         except KeyError:
             print(province, unit_type)
+    '''
 
     def get_orders(self):
         '''
@@ -215,9 +243,12 @@ class Gameboard():
         Adds Order to the self.orders mapping, removing
         any prior order that command the same unit.
         '''
-        for x in self.orders[self.turn]:
-            if x.unit == order.unit:
-                self.orders[turn].remove(x)
+        if not isinstance(order, WaiveOrder):
+            for x in self.orders[self.turn]:
+                # Exclude WaiveOrder from order set
+                if not isinstance(x, WaiveOrder):
+                    if x.unit == order.unit:
+                        self.orders[turn].remove(x)
         self.orders[self.turn].append(order)
 
     def is_ordered(self, unit):
@@ -288,6 +319,9 @@ class Unit():
         else:
             self.key = (self.power, self.unit_type, self.province)
 
+    def __eq__(self, other):
+        self.key == other.key
+
     def __repr__(self):
         return "Unit(%s, %s, %s, coast=%s)" % (self.power, self.unit_type, self.province, self.coast)
 
@@ -305,6 +339,12 @@ class Unit():
 
     def wrap(self):
         return self.tokenize().wrap()
+
+
+class Location():
+    def __init__(self, province, coast):
+        self.province = province
+        self.coast = coast
 
 
 class BaseOrder():
@@ -394,7 +434,7 @@ class SupportMoveOrder():
     >>> print(h)
     SupportMove(ENG FLT NWY | ENG FLT BAR -> STP)
     >>> print(h.message())
-    ( ( ENG FLT NWY ) SUP ( ENG FLT BAR ) MTO STP ) 
+    ( ( ENG FLT NWY ) SUP ( ENG FLT BAR ) MTO STP )
     '''
     def __init__(self, unit, supported, destination):
         BaseOrder.__init__(self)

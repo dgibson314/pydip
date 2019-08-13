@@ -73,6 +73,10 @@ class Token():
         cat_byte = self._hex >> 8
         return cat_byte in [0x54, 0x55, 0x56, 0x57]
 
+    def is_bicoastal(self):
+        cat_byte = self._hex >> 8
+        return cat_byte == 0x57
+
 
 class Message(list):
     def __init__(self, *args):

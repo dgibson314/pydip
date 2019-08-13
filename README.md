@@ -17,6 +17,9 @@ Pydip is a protocol-wrapper written in Python. This will (hopefully)
 make it easier to write my own bots to play Diplomacy using the
 DAIDE Server. Currently it is very much a work in progress.
 
+#### RandBot in action
+![](randbot1.gif)
+
 ## Getting started
 You'll need Python 3 to run things. You'll also need the DAIDE Server, and
 I recommend downloading David Norman's DAIDE Mapper as well, which

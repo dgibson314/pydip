@@ -77,9 +77,4 @@ class RandBot(BaseClient):
 
 if __name__ == '__main__':
     bot = RandBot()
-    bot.register()
-    while True:
-        msg = bot.recv_msg()
-        if msg:
-            bot.print_incoming_message(msg)
-            bot.handle_incoming_message(msg)
+    bot.play()

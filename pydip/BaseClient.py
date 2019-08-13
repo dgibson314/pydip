@@ -33,12 +33,13 @@ class BaseClient():
             self.connected = True
         except Exception:
             print("Unable to connect.\n")
+            self.sock.close()
+            self.connected = False
 
     def close(self):
         '''
         Closes socket connection to the DAIDE server
         '''
-        self.send_FM()
         self.sock.close()
         self.connected = False
 
@@ -117,6 +118,14 @@ class BaseClient():
         self.send_initial_msg()
         self.send_NME()
 
+    def play(self):
+        self.register()
+        while self.connected:
+            msg = self.recv_msg()
+            if msg:
+                self.print_incoming_message(msg)
+                self.handle_incoming_message(msg)
+
     def request_MAP(self):
         self.send_dcsp(+MAP)
 
@@ -188,6 +197,16 @@ class BaseClient():
     def handle_ORD(self, msg):
         self.map.process_ORD(msg)
 
+    # End of game
+    def handle_OFF(self, msg):
+        self.close()
+    def handle_SLO(self, msg):
+        self.close()
+    def handle_DRW(self, msg):
+        self.close()
+    def handle_SMR(self, msg):
+        self.close()
+
     def generate_orders(self):
         raise NotImplementedError
 
@@ -204,9 +223,4 @@ class BaseClient():
 
 if __name__ == '__main__':
     b = BaseClient()
-    b.register()
-    while True:
-        msg = b.recv_msg()
-        if msg:
-            b.print_incoming_message(msg)
-            b.handle_incoming_message(msg)
+    b.play()

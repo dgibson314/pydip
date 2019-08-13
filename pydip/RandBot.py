@@ -22,56 +22,65 @@ class RandBot(BaseClient):
 
         # Movement phase
         if season in [SPR, FAL]:
-            for unit in units:
-                order = random.choice(self.movement_phase_orders)
-                if order == MoveOrder:
-                    adj_provs = self.map.get_adjacencies(unit)
-                    destination = random.choice(adj_provs)
-                    self.map.add(order(unit, destination))
-                else:
-                    self.map.add(order(unit))
-
+            self.generate_movement_orders()
         # Retreat phase
         elif season in [SUM, AUT]:
-            for unit, opts in self.map.get_dislodged():
-                # No retreat options; disband unit.
-                if opts == []:
-                    self.map.add(DisbandOrder(unit))
-                # There is at least one province to retreat to.
-                # Choose a random one.
-                else:
-                    retreat_dest = random.choice(opts)
-                    self.map.add(RetreatOrder(unit, retreat_dest))
-
+            self.generate_retreat_orders()
         # Adjustment phase
         else:
-            build_num = self.map.build_number()
-            # Select random unit to remove
-            if build_num < 0:
-                random.shuffle(units)
-                for i in range(abs(build_num)):
-                    self.map.add(RemoveOrder(units[i]))
-            elif build_num > 0:
-                home = self.map.open_home_centers()
-                random.shuffle(home)
-                max_build = min(build_num, len(home))
-                delta = build_num - max_build
+            self.generate_adjustment_orders()
 
-                for i in range(max_build):
-                    province = home[i]
-                    coast = None
-                    if province.is_coastal():
-                        unit_type = random.choice([AMY, FLT])
-                        if unit_type == FLT and province.is_bicoastal():
-                            coast = random.choice(self.map.coasts[province])
-                    else:
-                        unit_type = AMY
-                    unit = Unit(self.power, unit_type, (province, coast))
-                    self.map.add(BuildOrder(unit))
+    def generate_movement_orders(self):
+        for unit in self.map.get_own_units():
+            order = random.choice(self.movement_phase_orders)
+            if order == MoveOrder:
+                adj_provs = self.map.get_adjacencies(unit)
+                destination = random.choice(adj_provs)
+                self.map.add(order(unit, destination))
+            else:
+                self.map.add(order(unit))
 
-                if delta > 0:
-                    for i in range(delta):
-                        self.map.add(WaiveOrder(self.power))
+    def generate_retreat_orders(self):
+        for unit, opts in self.map.get_dislodged():
+            # No retreat options; disband unit.
+            if opts == []:
+                self.map.add(DisbandOrder(unit))
+            # There is at least one province to retreat to.
+            # Choose a random one.
+            else:
+                retreat_dest = random.choice(opts)
+                self.map.add(RetreatOrder(unit, retreat_dest))
+
+    def generate_adjustment_orders(self):
+        units = self.map.get_own_units()
+        build_num = self.map.build_number()
+
+        # Select random unit to remove
+        if build_num < 0:
+            random.shuffle(units)
+            for i in range(abs(build_num)):
+                self.map.add(RemoveOrder(units[i]))
+        elif build_num > 0:
+            home = self.map.open_home_centers()
+            random.shuffle(home)
+            max_build = min(build_num, len(home))
+            delta = build_num - max_build
+
+            for i in range(max_build):
+                province = home[i]
+                coast = None
+                if province.is_coastal():
+                    unit_type = random.choice([AMY, FLT])
+                    if unit_type == FLT and province.is_bicoastal():
+                        coast = random.choice(self.map.coasts[province])
+                else:
+                    unit_type = AMY
+                unit = Unit(self.power, unit_type, (province, coast))
+                self.map.add(BuildOrder(unit))
+
+            if delta > 0:
+                for i in range(delta):
+                    self.map.add(WaiveOrder(self.power))
 
 
 if __name__ == '__main__':

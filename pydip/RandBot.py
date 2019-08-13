@@ -1,5 +1,4 @@
 import random
-import time
 
 from BaseClient import BaseClient
 from language import *
@@ -18,7 +17,6 @@ class RandBot(BaseClient):
         self.version = '1.0'
 
     def generate_orders(self):
-        time.sleep(1)
         units = self.map.get_own_units()
         season = self.map.season
 

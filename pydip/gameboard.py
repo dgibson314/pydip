@@ -221,15 +221,26 @@ class Gameboard():
             result += order.message()
         return result
 
-    def build_number(self):
+    def sc_surplus(self):
         '''
-        Calculates the difference between the number of supply centers
-        held and the number of units currently in play. Used during
-        WIN season for adjustements.
+        Calculates the difference between the number of supply centers held
+        and the number of units owned. Used during WIN season for 
+        adjustments.
         '''
         sc = len(self.get_supply_centers(self.power_played))
         units = len(self.get_own_units())
         return sc - units
+
+    def build_numbers(self):
+        '''
+        Returns tuple of (builds, waives)
+        Used during WIN season for adjustments.
+        '''
+        surplus = self.sc_surplus()
+        openings = self.open_home_centers()
+        builds = min(surplus, len(openings))
+        waives = surplus - builds
+        return (builds, waives)
 
     def missing_orders(self):
         units_ordered = [order.unit for order in self.orders[self.turn]]

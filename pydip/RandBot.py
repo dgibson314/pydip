@@ -53,21 +53,20 @@ class RandBot(BaseClient):
 
     def generate_adjustment_orders(self):
         units = self.map.get_own_units()
-        build_num = self.map.build_number()
+        surplus = self.map.sc_surplus()
 
-        # Select random unit to remove
-        if build_num < 0:
+        # More units than supply centers; randomly remove units
+        if surplus < 0:
             random.shuffle(units)
-            for i in range(abs(build_num)):
+            for i in range(abs(surplus)):
                 self.map.add(RemoveOrder(units[i]))
-        elif build_num > 0:
-            home = self.map.open_home_centers()
-            random.shuffle(home)
-            max_build = min(build_num, len(home))
-            delta = build_num - max_build
 
-            for i in range(max_build):
-                province = home[i]
+        elif surplus > 0:
+            builds, waives = self.map.build_numbers()
+            homes = self.map.open_home_centers()
+            random.shuffle(homes)
+            for i in range(builds):
+                province = homes[i]
                 coast = None
                 if province.is_coastal():
                     unit_type = random.choice([AMY, FLT])
@@ -78,9 +77,8 @@ class RandBot(BaseClient):
                 unit = Unit(self.power, unit_type, (province, coast))
                 self.map.add(BuildOrder(unit))
 
-            if delta > 0:
-                for i in range(delta):
-                    self.map.add(WaiveOrder(self.power))
+            for i in range(waives):
+                self.map.add(WaiveOrder(self.power))
 
 
 if __name__ == '__main__':

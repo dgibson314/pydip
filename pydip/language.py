@@ -69,6 +69,14 @@ class Token():
             return util.province_categories[cat_byte]
         return None
 
+    def is_land(self):
+        cat_byte = self._hex >> 8
+        return cat_byte in [0x50, 0x51, 0x54, 0x55, 0x56, 0x57]
+
+    def is_inland(self):
+        cat_byte = self._hex >> 8
+        return cat_byte in [0x50, 0x51]
+
     def is_coastal(self):
         cat_byte = self._hex >> 8
         return cat_byte in [0x54, 0x55, 0x56, 0x57]
@@ -76,6 +84,10 @@ class Token():
     def is_bicoastal(self):
         cat_byte = self._hex >> 8
         return cat_byte == 0x57
+
+    def is_sea(self):
+        cat_byte = self._hex >> 8
+        return cat_byte in [0x52, 0x53]
 
 
 class Message(list):

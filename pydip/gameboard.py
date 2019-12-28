@@ -1,4 +1,9 @@
+import collections
+
 from language import *
+
+
+Location = collections.namedtuple('Location', 'province coast')
 
 
 class Gameboard():
@@ -193,10 +198,24 @@ class Gameboard():
         unit_type = unit.unit_type
         province = unit.province
         coast = unit.coast
-        if coast:
+        if coast is not None:
             return self.adjacencies[province][(unit_type, coast)]
         else:
             return self.adjacencies[province][unit_type]
+
+    def get_adjacent_provinces(self, province, coast):
+        '''
+        Returns a list of all adjacent provinces to the province
+        parameter.
+        '''
+        if coast is not None:
+            flt_adjs = self.adjacencies[province][(FLT, coast)]
+            amy_adjs = self.adjacencies[province][(AMY, coast)]
+            return list(set(flt_adjs) & set(amy_adjs))
+        else:
+            flt_adjs = self.adjacencies[province][FLT]
+            amy_adjs = self.adjacencies[province][AMY]
+            return list(set(flt_adjs) & set(amy_adjs))
 
     '''
     def get_adjacencies(self, province, unit_type=None):
@@ -299,6 +318,101 @@ class Gameboard():
                 unordered.append(unit)
         return unordered
 
+    def get_convoy_paths(self, army):
+        '''
+        Returns a list of all valid convoy paths from the province.
+        Note that these paths may include convoys from non-self powers.
+        '''
+        path = []
+
+        def rev_convoy_helper(self, paths):
+            '''
+            Recursively appends valid next convoy locations onto a list of paths,
+            each path being a list of Locations.
+            '''
+            new_paths = []
+            for path in paths:
+                current = path[-1]
+                if current.province.is_sea():
+                    adj_fleets = self.get_adjacent_fleets(current.province, current.coast)
+                    adj_locations = [Location(province=f.province, coast=f.coast) for f in adj_fleets]
+                    # Remove previous Location so that we don't travel back and forth forever.
+                    adj_locations = list(set(adj_locations) - set(path[-2]))
+                    for loc in adj_locations:
+                        new_path = path
+                        new_path.append(loc)
+                        new_paths.append(path)
+                        # TODO: does this work instead?
+                        # new_paths.append(path.append(loc)
+
+                    adj_coasts = self.get_adjacent_coasts(current.province, current.coast)
+            raise NotImplementedError
+
+        raise NotImplementedError
+
+    def get_convoyable(self, unit):
+        '''
+        Returns a list of (Unit, province list) tuples, of all adjacent
+        units and the provinces that they can be convoyed to.
+        Returns None if not a fleet unit or no other units can be
+        convoyed.
+        '''
+        raise NotImplementedError
+        if unit.is_fleet():
+            pass
+        else:
+            return None
+
+    def get_adjacent_armies(self, province, coast):
+        '''
+        Returns a list of all adjacent army Units.
+        '''
+        armies = []
+        adj_provs = self.get_adjacent_provinces(province, coast)
+        for prov in adj_provs:
+            adj_unit = self.get_unit_of_province(prov)
+            if adj_unit is not None:
+                if adj_unit.is_army():
+                    armies.append(adj_unit)
+        return armies
+
+    def get_adjacent_fleets(self, province, coast):
+        '''
+        Returns a list of adjacent fleet Units.
+        '''
+        fleets = []
+        adj_provs = self.get_adjacent_provinces(province, coast)
+        for prov in adj_provs:
+            adj_unit = self.get_unit_of_province(prov)
+            if adj_unit is not None:
+                if adj_unit.is_fleet():
+                    fleets.append(adj_unit)
+        return fleets
+
+    def get_adjacent_seas(self, province, coast):
+        '''
+        Returns a list of adjacent sea provinces as Locations.
+        '''
+        adj_provs = self.get_adjacent_provinces(province, coast)
+        return [Location(province=p, coast=None) for p in adj_provs if p.is_sea()]
+
+    def get_adjacent_coasts(self, province, coast):
+        '''
+        Returns a list of adjacent coastal provinces as Locations.
+        '''
+        adj_provs = self.get_adjacent_provinces(province, coast)
+        raise NotImplementedError
+
+    def get_unit_of_province(self, province):
+        '''
+        Returns the Unit that belongs to the province, or None if none can be found.
+        '''
+        for power in self.units:
+            for unit in self.units[power]:
+                if unit.province is province:
+                    return unit
+        return None
+
     def open_home_centers(self):
         '''
         Returns list of open home supply centers.
@@ -320,12 +434,19 @@ def unpack_province(province):
         return (province, None)
 
 
+def location_of_province(province):
+    if isinstance(province, list) or isinstance(province, tuple):
+        return Location(province=province[0], coast=province[1])
+    else:
+        return Location(province=province, coast=None)
+
+
 class Unit():
     def __init__(self, power, unit_type, province):
         self.power = power
         self.unit_type = unit_type
         self.province, self.coast = unpack_province(province)
-        if self.coast:
+        if self.coast is not None:
             self.key = (self.power, self.unit_type, (self.province, self.coast))
         else:
             self.key = (self.power, self.unit_type, self.province)
@@ -337,25 +458,25 @@ class Unit():
         return "Unit(%s, %s, %s, coast=%s)" % (self.power, self.unit_type, self.province, self.coast)
 
     def __str__(self):
-        if self.coast:
+        if self.coast is not None:
             return "%s %s ( %s %s )" % (self.power, self.unit_type, self.province, self.coast)
         else:
             return "%s %s %s" % (self.power, self.unit_type, self.province)
 
     def tokenize(self):
-        if self.coast:
+        if self.coast is not None:
             return Message(self.power, self.unit_type)(self.province, self.coast)
         else:
             return Message(self.power, self.unit_type, self.province)
 
+    def is_fleet(self):
+        return self.unit_type is FLT
+
+    def is_army(self):
+        return self.unit_type is AMY
+
     def wrap(self):
         return self.tokenize().wrap()
-
-
-class Location():
-    def __init__(self, province, coast):
-        self.province = province
-        self.coast = coast
 
 
 class BaseOrder():
@@ -403,13 +524,13 @@ class MoveOrder():
         return "MoveOrder(%s, (%s, %s))" % (repr(self.unit), self.dest, self.dest_coast)
 
     def __str__(self):
-        if self.dest_coast:
+        if self.dest_coast is not None:
             return "Move(%s -> ( %s %s ))" % (self.unit, self.dest, self.dest_coast)
         else:
             return "Move(%s -> %s)" % (self.unit, self.dest)
 
     def message(self):
-        if self.dest_coast:
+        if self.dest_coast is not None:
             destination = Message(self.dest, self.dest_coast).wrap()
             return (self.unit.wrap() ++ MTO + destination).wrap()
         else:
@@ -509,13 +630,13 @@ class RetreatOrder():
         return "RetreatOrder(%s, (%s, %s))" % (repr(self.unit), self.dest, self.dest_coast)
 
     def __str__(self):
-        if self.dest_coast:
+        if self.dest_coast is not None:
             return "Retreat(%s -> ( %s %s ))" % (self.unit, self.dest, self.dest_coast)
         else:
             return "Retreat(%s -> %s)" % (self.unit, self.dest)
 
     def message(self):
-        if self.dest_coast:
+        if self.dest_coast is not None:
             destination = Message(self.dest, self.dest_coast).wrap()
             return (self.unit.wrap() ++ RTO + destination).wrap()
         else:

@@ -8,6 +8,7 @@ from gameboard import *
 class RandBot(BaseClient):
     '''
     The next step up from the HoldBot.
+    TODO: doesn't do Convoying yet.
     '''
     movement_phase_orders = [HoldOrder, MoveOrder]
 

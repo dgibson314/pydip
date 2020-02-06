@@ -35,7 +35,7 @@ class RandBot(BaseClient):
         for unit in self.map.get_own_units():
             order = random.choice(self.movement_phase_orders)
             if order == MoveOrder:
-                adj_provs = self.map.get_adjacencies(unit)
+                adj_provs = self.map.get_moveable_adjacencies(unit)
                 destination = random.choice(adj_provs)
                 self.map.add(order(unit, destination))
             else:

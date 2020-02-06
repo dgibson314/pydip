@@ -190,7 +190,7 @@ class Gameboard():
     def get_supply_centers(self, power):
         return self.supply_centers[power]
 
-    def get_adjacencies(self, unit):
+    def get_moveable_adjacencies(self, unit):
         '''
         Returns a list of provinces able to be moved to
         by a Unit.
